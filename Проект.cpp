@@ -22,6 +22,12 @@ struct Koord_Op
     double x_travers31, y_travers31, x_travers32, y_travers32, x_travers33, y_travers33, x_travers34, y_travers34;
     };
 
+struct Data
+    {
+    double Vetr, Gololed;
+    double Yp, Ynw;
+    };
+
 Koord_Op Opor_kord = {};
 
 double XWindow = 1216 + 250, YWindow = 760;
@@ -31,7 +37,7 @@ double XWindow = 1216 + 250, YWindow = 760;
 void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst);
 void text (const char * text, double x, double y, double shrift = 15);
 void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y);
-void Texst_Stroka (int* x, int *y);
+double Text_Stroka (double *x, double *y);
 double Interpolyaciya (double X1, double X2, double Xnugn, double nah1, double nah2);
 double Kg   (double Pa);
 double Pw   (double Ph_w, double Ynw, double Yp);
@@ -47,6 +53,8 @@ double Fu   (double Du,  double Hu, double n,   double N);
 int main()
     {
     txCreateWindow (XWindow, YWindow);
+
+    txTextCursor (false);
 
     HDC Knopka_Vkl  = txLoadImage ("Image//Опоры//Шаблон_Вкл.bmp");
     HDC Knopka_Vikl = txLoadImage ("Image//Опоры//Шаблон_Викл.bmp");
@@ -79,16 +87,26 @@ int main()
 
     txClear ();
 
+    double y = 23, x = 390;
+
     txSetColor (TX_BLACK);
-    text ("Климатические условия     :", 0, 0,  30);
-    text ("1. Район по ветру         :", 0, 16, 30);
-    text ("2. Район по гололеду      :", 0, 32, 30);
-    text ("3. Региональный коэффицент:", 0, 48, 30);
-    text ("4. Коэффицент надежности  :", 0, 64, 30);
+    text ("Климатические условия",                  0, 0,  30);
+    text ("1. Район по ветру                    :", 0, 20, 30);
+    text ("2. Район по гололеду             :",     0, 40, 30);
+    text ("3. Региональный коэффицент:",            0, 60, 30);
+    text ("4. Коэффицент надежности    :",          0, 80, 30);
 
-    int x = 324, y = 0;
-    Texst_Stroka(&x, &y);
+    double data [4] = {};
 
+    for (int i = 0; !GetAsyncKeyState (VK_RETURN); i ++)
+        {
+        data [i] = Text_Stroka (&x, &y);
+        txSleep (150);
+        txSetColor (TX_WHITE);
+        txLine (x, y + 7, x, y + 23);
+        x = 390;
+        y += 20;
+        }
 
     return 0;
     }
@@ -157,38 +175,52 @@ void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y)
     txLine (op.x_travers34 * Zoom + Sdvig_x, -op.y_travers34 * Zoom + Sdvig_y, op.x_travers31 * Zoom + Sdvig_x, -op.y_travers31 * Zoom + Sdvig_y);
     }
 
-void Texst_Stroka (int* x, int *y)
+double Text_Stroka (double *x, double *y)
     {
-    char *teks[11] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."};
-    int  Key [11] = {};
-    for (int i = 0; i < 10; i++) Key[i] = 48 + i;
-    Key [10] = 190;
+    int Kl [11] = {};
+    for (int i = 0; i < 10; i ++) Kl [i] = i + 48;
+    Kl [10] = 190;
 
-    for (int t = 0; !GetAsyncKeyState (VK_RETURN); t++)
+    char Kl_t[11] [40] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."};
+
+    double Vvod = 0;
+
+    int tochka = 0, kol_zn_posl_zap = 0;
+
+    for (int n = 0; !GetAsyncKeyState (VK_DOWN); n ++)
         {
-        if (t%80000 < 40000)
-            {
-            txSetColor (TX_BLACK);
-            txLine (*x, *y, *x, *y + 30);
-            }
-        else
-            {
-            txSetColor (TX_WHITE);
-            txLine (*x, *y, *x, *y + 30);
-            }
         for (int i = 0; i < 11; i ++)
             {
-            if (GetAsyncKeyState (Key[i]))
+            if (GetAsyncKeyState (Kl[i]))
                 {
-                txSetColor (TX_BLACK);
-                text (teks[i], *x, *y, 30);
-                *x += 15;
-                txSleep (100);
+                if (!GetAsyncKeyState (190) && tochka == 0) Vvod = Vvod * 10 + Kl [i] - 48;
+                if (!GetAsyncKeyState (190) && tochka == 1)
+                    {
+                    Vvod += (Kl [i] - 48) / pow (10, kol_zn_posl_zap + 1);
+                    kol_zn_posl_zap ++;
+                    }
+                if (GetAsyncKeyState (190)) tochka = 1;
                 txSetColor (TX_WHITE);
-                txLine (*x - 11, *y, *x - 11, *y + 15);
+                txLine (*x, *y + 7, *x, *y + 23);
+                txSetColor (TX_BLACK);
+                text (Kl_t[i], *x, *y, 25);
+                *x += 25 / 2.5 + 2;
+                txSleep (125);
                 }
             }
+
+        if (n % 400000 == 200000)
+            {
+            txSetColor (TX_WHITE);
+            txLine (*x, *y + 7, *x, *y + 23);
+            }
+        if (n % 400000 == 0)
+            {
+            txSetColor (TX_BLACK);
+            txLine (*x, *y + 7, *x, *y + 23);
+            }
         }
+    return Vvod;
     }
 
 double Interpolyaciya (double X1, double X2, double Xnugn, double nah1, double nah2)
