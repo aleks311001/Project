@@ -134,33 +134,33 @@ int main()
         if (GetAsyncKeyState (VK_RETURN) && i >= 18) break;
         }
 
-    double Kg1 = Kg (data[4]);
+    double Kg1 = Kg (data[4]);  //0.8
     //------------------------------------------------------------------------------
-    double Aw1 = Aw (data [4]);
-    double Kl1 = Kl (data [5]);
-    double Kw_pr1 = Kw (data [6], tekst);
-    double Cx1 = Cx (data [7], false);
-    double F1 = F  (data [7], data [9]);
+    double Aw1 = Aw (data [4]); //0.7
+    double Kl1 = Kl (data [5]); //1
+    double Kw_pr1 = Kw (data [6], tekst); //1.2
+    double Cx1 = Cx (data [7], false);    //1.1
+    double F1 = F  (data [7], data [9]);  //7.35
     //--
-    double Ph_w1 = Ph_w (Aw1, Kl1, Kw_pr1, Cx1, data [8], F1, data [10]);
+    double Ph_w1 = Ph_w (Aw1, Kl1, Kw_pr1, Cx1, data [8], F1, data [10]); //6791
     //----------
-    double Pw1 = Pw (Ph_w1, data [3], data [2]);
+    double Pw1 = Pw (Ph_w1, data [3], data [2]);//10682
     //-------------------------------------------------------------------------------
-    double Kw_u1 = Kw (data [11], tekst);
-    double Fu1 = Fu (data [12], data [13], data [14], data [15]);
+    double Kw_u1 = Kw (data [11], tekst); //1.325
+    double Fu1 = Fu (data [12], data [13], data [14], data [15]);//0.204
     //--------------------------------
-    double Pu1 = Pu (data [3], data [2], Kw_u1, Fu1, data [8]);
+    double Pu1 = Pu (data [3], data [2], Kw_u1, Fu1, data [8]);//603
     //----------------------------------------------------------------------------
-    double Gpr = data [16] * data [17] * 9.81;
+    double Gpr = data [16] * data [17] * 9.81; //1765.8
     //-----------------------------------------------------------------------------
-    double Gg  = data [18] * 9.81;
+    double Gg  = data [18] * 9.81; //981
     //------------------------------------------------------------------------------
     double Gb = 0;
     //----------------------------------------------------------------------------
-    double tan_Ugol = (Kg1 * Pw1 + Pu1) / (Gpr + 0.5 * Gg + Gb);
-    double Ugol = atan (tan_Ugol) * 180 / 3.14;
+    double tan_Ugol = (Kg1 * Pw1 + Pu1) / (Gpr + 0.5 * Gg + Gb);//4.0555
+    double Ugol = atan (tan_Ugol);//76.1
 
-    printf ("%f,", Ugol);
+    printf ("%f,", Kg1);
 
     return 0;
     }
