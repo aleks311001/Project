@@ -29,18 +29,22 @@ double XWindow = 1216 + 250, YWindow = 760;
 //double X1 = 0, Y1 = 0, X2 = 0, Y2 = 0, X3 = 0, Y3 = 0;
 
 void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst);
+void Vibor_Opori ();
+void Nahogdenie_Ugla ();
 void text (const char * text, double x, double y, double shrift = 15);
 void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y);
 void Clear (double x1, double y1, double x2, double y2);
 double Text_Stroka (double *x, double *y, bool *up_or_down);
+double Otbros (double x);
 double Interpolyaciya (double X1, double X2, double Xnugn, double nah1, double nah2);
+double Pa   (double tip);
 double Kg   (double Pa);
 double Pw   (double Ph_w, double Ynw, double Yp);
 double Ph_w (double Aw,   double Kl,  double Kw, double Cx, double W, double F, double b);
 double Aw   (double Pa);
 double Kl   (double Dl_Proleta);
 double F    (double diam,  double l, double Ki = 0, double Kl = 0, double By = 0);
-double Kw   (double Visota, const char * tekst);
+double Kw   (double Visota, int k);
 double Cx   (double d, bool Gololed);
 double Pu   (double Ynw, double Yp, double Kw , double Fu, double W0);
 double Fu   (double Du,  double Hu, double n,   double N);
@@ -51,11 +55,127 @@ int main()
 
     txTextCursor (false);
 
+    Vibor_Opori ();
+    /*HDC Knopka_Vkl  = txLoadImage ("Image//Опоры//Шаблон_Вкл.bmp");
+    HDC Knopka_Vikl = txLoadImage ("Image//Опоры//Шаблон_Викл.bmp");
+
+    Knop Kn[5][8] = {};
+    //--------------------|         |           |
+    Koord_Op OP [5][8]= {{{-1.25, 0, -0.375, 18, -0.375, 25, -0.375, 25, 0.375, 25, 0.375, 25, 0.375, 18, 1.25, 0, -2, 19, -0.375, 20, 0.375, 20, 4.1, 19, 2,    23,  0.375, 24, -0.375, 24, -0.375, 23},
+                          {-1.25, 0, -0.375, 18, -0.375, 30,  0,     31, 0.375, 31, 0.375, 30, 0.375, 18, 1.25, 0, -2, 19, -0.375, 20, 0.375, 20, 2,   19, -4.1, 23, -0.375, 24,  0.375, 24,  4.1,   23, -2, 27, -0.375, 28, 0.375, 28, 2, 27}}};
+
+    char Nazv [5][8][49] = {{"П 110-1", "П 110-2"}};
+
+    while (txMouseButtons() != 1)
+        {
+        txBegin ();
+        txClear ();
+        for (int i = 0; i < 5; i++)
+            {
+            for (int n = 0; n < 8; n++)
+                {
+                Kn [i][n].x    = 152 * n + 76;
+                Kn [i][n].y    = 152 * i + 76;
+                Kn [i][n].vkl  = Knopka_Vkl;
+                Kn [i][n].vikl = Knopka_Vikl;
+                Knopka_Vibor (&Kn [i][n], OP[i][n], Nazv[i][n]);
+                }
+            }
+        txEnd ();
+        }
+
+    txClear ();*/
+
+    Nahogdenie_Ugla ();
+    /*double y = 23, x = 880;
+
+    txSetColor (TX_BLACK);
+    //text ("Климатические условия",                                              0, 0,   30);
+    text ("1.  Район по ветру:",                                                0, 20,  30);
+    text ("2.  Район по гололеду:",                                             0, 40,  30);
+    text ("3.  Региональный коэффицент:",                                       0, 60,  30);
+    text ("4.  Коэффицент надежности:",                                         0, 80,  30);
+    text ("5.  Тип местности (1 - А; 2 - В; 3 - С):",                           0, 100, 30);
+    text ("6.  Длина пролета:",                                                 0, 120, 30);
+    text ("7.  Высота расположения Приведенного центра тяжести проводов:",      0, 140, 30);
+    text ("8.  Диаметр провода:",                                               0, 160, 30);
+    text ("9.  Нормативное ветровое давление:",                                 0, 180, 30);//
+    text ("10. Длина ветрового пролета:",                                       0, 200, 30);
+    text ("11. Угол между направлением ветра и осью ВЛ:",                       0, 220, 30);
+    text ("12. Высота расположения Приведенного центра тяжести изоляторов:",    0, 240, 30);
+    text ("13. Диаметр тарелки изоляторов:",                                    0, 260, 30);
+    text ("14. Строительная высота изолятора:",                                 0, 280, 30);
+    text ("15. Число изоляторов в цепи:",                                       0, 300, 30);
+    text ("16. Число цепей изоляторов в гирляде:",                              0, 320, 30);
+    text ("17. Масса одного метра провода:",                                    0, 340, 30);
+    text ("18. Весовой пролет:",                                                0, 360, 30);
+    text ("19. Масса гирлянды:",                                                0, 380, 30);
+
+    bool up_or_down = false;
+
+    double data [19] = {};
+
+    for (int i = 0;;)
+        {
+        data [i] = Text_Stroka (&x, &y, &up_or_down);
+        txSleep (150);
+        txSetColor (TX_WHITE);
+        txLine (x, y + 7, x, y + 23);
+        x = 880;
+        if (up_or_down == false)
+            {
+            y += 20;
+            i ++;
+            }
+        if (up_or_down == true && i > 0)
+            {
+            y -= 20;
+            i --;
+            txSetFillColor (TX_WHITE);
+            Clear (880, y, 1000, y + 20);
+            }
+        if (GetAsyncKeyState (VK_RETURN) && i >= 18) break;
+        }
+
+    double Pa1 = Pa (data[0]);
+    double Kg1 = Kg (Pa1); //0.8
+    //------------------------------------------------------------------------------
+    double Aw1 = Aw (Pa1); //0.7
+    double Kl1 = Kl (data [5]); //1
+    double Kw_pr1 = Kw (data [6], data [4]); //1.2   тип местности
+    double Cx1 = Cx (data [7], false);    //1.1
+    double F1 = F  (data [7], data [9]);  //7.35
+    //--
+    double Ph_w1 = Ph_w (Aw1, Kl1, Kw_pr1, Cx1, Pa1, F1, data [10]); //6791
+    //----------
+    double Pw1 = Pw (Ph_w1, data [3], data [2]);//10682
+    //-------------------------------------------------------------------------------
+    double Kw_u1 = Kw (data [11], data [4]); //1.325  // тип местности
+    double Fu1 = Fu (data [12], data [13], data [14], data [15]);//0.204
+    //--------------------------------
+    double Pu1 = Pu (data [3], data [2], Kw_u1, Fu1, Pa1);//603
+    //----------------------------------------------------------------------------
+    double Gpr = data [16] * data [17] * 9.81; //1765.8
+    //-----------------------------------------------------------------------------
+    double Gg  = data [18] * 9.81; //981
+    //------------------------------------------------------------------------------
+    double Gb = 0;
+    //----------------------------------------------------------------------------
+    double tan_Ugol = (Kg1 * Pw1 + Pu1) / (Gpr + 0.5 * Gg + Gb);//4.0555
+    double Ugol = atan (tan_Ugol) * 180 / 3.1415;//76.1
+
+    printf ("%f, %f, %f, %f, %f, %f", Kw_u1, Fu1, Pu1, Gpr, Gg,  Ugol);*/
+
+    return 0;
+    }
+
+void Vibor_Opori ()
+    {
     HDC Knopka_Vkl  = txLoadImage ("Image//Опоры//Шаблон_Вкл.bmp");
     HDC Knopka_Vikl = txLoadImage ("Image//Опоры//Шаблон_Викл.bmp");
 
     Knop Kn[5][8] = {};
-    FILE* f_r = fopen ("База.cpp", "r");
+    /*FILE* f_r = fopen ("База.cpp", "r");*/
     //--------------------|         |           |
     Koord_Op OP [5][8]= {{{/*fprintf (f_r, "%f", 1)*/-1.25, 0, -0.375, 18, -0.375, 25, -0.375, 25, 0.375, 25, 0.375, 25, 0.375, 18, 1.25, 0, -2, 19, -0.375, 20, 0.375, 20, 4.1, 19, 2,    23,  0.375, 24, -0.375, 24, -0.375, 23},
                           {-1.25, 0, -0.375, 18, -0.375, 30,  0,     31, 0.375, 31, 0.375, 30, 0.375, 18, 1.25, 0, -2, 19, -0.375, 20, 0.375, 20, 2,   19, -4.1, 23, -0.375, 24,  0.375, 24,  4.1,   23, -2, 27, -0.375, 28, 0.375, 28, 2, 27}}};
@@ -81,44 +201,47 @@ int main()
         }
 
     txClear ();
+    }
 
-    double y = 23, x = 850;
+void Nahogdenie_Ugla ()
+    {
+    double y = 23, x = 880;
 
     txSetColor (TX_BLACK);
     //text ("Климатические условия",                                              0, 0,   30);
-    text ("1.  Район по ветру:",                                                0, 20,  30);
-    text ("2.  Район по гололеду:",                                             0, 40,  30);
-    text ("3.  Региональный коэффицент:",                                       0, 60,  30);
-    text ("4.  Коэффицент надежности:",                                         0, 80,  30);
-    text ("5.  Ветровое давление:",                                             0, 100, 30);
-    text ("6.  Длина пролета:",                                                 0, 120, 30);
-    text ("7.  Высота расположения Приведенного центра тяжести проводов:",      0, 140, 30);
-    text ("8.  Диаметр провода:",                                               0, 160, 30);
-    text ("9.  Нормативное ветровое давление:",                                 0, 180, 30);
-    text ("10. Длина ветрового пролета:",                                       0, 200, 30);
-    text ("11. Угол между направлением ветра и осью ВЛ:",                       0, 220, 30);
-    text ("12. Высота расположения Приведенного центра тяжести изоляторов:",    0, 240, 30);
-    text ("13. Диаметр тарелки изоляторов:",                                    0, 260, 30);
-    text ("14. Строительная высота изолятора:",                                 0, 280, 30);
-    text ("15. Число изоляторов в цепи:",                                       0, 300, 30);
-    text ("16. Число цепей изоляторов в гирляде:",                              0, 320, 30);
-    text ("17. Масса одного метра провода:",                                    0, 340, 30);
-    text ("18. Весовой пролет:",                                                0, 360, 30);
-    text ("19. Масса гирлянды:",                                                0, 380, 30);
+    text ("1.  Район по ветру:",                                                                         0, 20,  30);
+    text ("2.  Район по гололеду:",                                                                      0, 40,  30);
+    text ("3.  Региональный коэффицент:",                                                                0, 60,  30);
+    text ("4.  Коэффицент надежности по ответственности:",                                               0, 80,  30);
+    text ("5.  Тип местности (1 - А; 2 - В; 3 - С):",                                                    0, 100, 30);
+    text ("6.  Длина пролета, м:",                                                                       0, 120, 30);
+    text ("7.  Высота расположения Приведенного центра тяжести проводов, м:",                            0, 140, 30);
+    text ("8.  Диаметр провода, мм:",                                                                    0, 160, 30);
+    text ("9.  Нормативное ветровое давление:",                                                          0, 180, 30);//
+    text ("10. Длина ветрового пролета, м:",                                                             0, 200, 30);
+    text ("11. Угол между направлением ветра и осью ВЛ, град:",                                          0, 220, 30);
+    text ("12. Высота расположения Приведенного центра тяжести изоляторов, м:",                          0, 240, 30);
+    text ("13. Диаметр тарелки изоляторов, мм:",                                                         0, 260, 30);
+    text ("14. Строительная высота изолятора, мм:",                                                      0, 280, 30);
+    text ("15. Число изоляторов в цепи, шт:",                                                            0, 300, 30);
+    text ("16. Число цепей изоляторов в гирляде, шт:",                                                   0, 320, 30);
+    text ("17. Масса одного метра провода, кг/м:",                                                       0, 340, 30);
+    text ("18. Весовой пролет, м:",                                                                      0, 360, 30);
+    text ("19. Масса гирлянды, кг:",                                                                     0, 380, 30);
+    text ("Нажмите M, чтобы посмотреть карты районирования территории РФ по климатическим воздействиям", 0, 400, 30);
 
     bool up_or_down = false;
 
     double data [19] = {};
 
-    const char tekst [2] = "A";
-
+    printf ("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
     for (int i = 0;;)
         {
         data [i] = Text_Stroka (&x, &y, &up_or_down);
         txSleep (150);
         txSetColor (TX_WHITE);
         txLine (x, y + 7, x, y + 23);
-        x = 850;
+        x = 880;
         if (up_or_down == false)
             {
             y += 20;
@@ -129,27 +252,28 @@ int main()
             y -= 20;
             i --;
             txSetFillColor (TX_WHITE);
-            Clear (850, y, 1000, y + 20);
+            Clear (880, y, 1000, y + 20);
             }
         if (GetAsyncKeyState (VK_RETURN) && i >= 18) break;
         }
 
-    double Kg1 = Kg (data[4]);  //0.8
+    double Pa1 = Pa (data[0]);
+    double Kg1 = Kg (Pa1); //0.8
     //------------------------------------------------------------------------------
-    double Aw1 = Aw (data [4]); //0.7
+    double Aw1 = Aw (Pa1); //0.7
     double Kl1 = Kl (data [5]); //1
-    double Kw_pr1 = Kw (data [6], tekst); //1.2
+    double Kw_pr1 = Kw (data [6], data [4]); //1.2   тип местности
     double Cx1 = Cx (data [7], false);    //1.1
     double F1 = F  (data [7], data [9]);  //7.35
     //--
-    double Ph_w1 = Ph_w (Aw1, Kl1, Kw_pr1, Cx1, data [8], F1, data [10]); //6791
+    double Ph_w1 = Ph_w (Aw1, Kl1, Kw_pr1, Cx1, Pa1, F1, data [10]); //6791
     //----------
     double Pw1 = Pw (Ph_w1, data [3], data [2]);//10682
     //-------------------------------------------------------------------------------
-    double Kw_u1 = Kw (data [11], tekst); //1.325
+    double Kw_u1 = Kw (data [11], data [4]); //1.325  // тип местности
     double Fu1 = Fu (data [12], data [13], data [14], data [15]);//0.204
     //--------------------------------
-    double Pu1 = Pu (data [3], data [2], Kw_u1, Fu1, data [8]);//603
+    double Pu1 = Pu (data [3], data [2], Kw_u1, Fu1, Pa1);//603
     //----------------------------------------------------------------------------
     double Gpr = data [16] * data [17] * 9.81; //1765.8
     //-----------------------------------------------------------------------------
@@ -158,11 +282,10 @@ int main()
     double Gb = 0;
     //----------------------------------------------------------------------------
     double tan_Ugol = (Kg1 * Pw1 + Pu1) / (Gpr + 0.5 * Gg + Gb);//4.0555
-    double Ugol = atan (tan_Ugol);//76.1
+    double Ugol = atan (tan_Ugol) * 180 / 3.1415;//76.1
 
-    printf ("%f,", Kg1);
+    printf ("%f, %f, %f, %f, %f, %f", Kw_u1, Fu1, Pu1, Gpr, Gg/*, tan_Ugol*/,  Ugol);
 
-    return 0;
     }
 
 void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst)
@@ -231,6 +354,7 @@ void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y)
 
 double Text_Stroka (double *x, double *y, bool *up_or_down)
     {
+    int X_min = *x;
     int Kl [11] = {};
     for (int i = 0; i < 10; i ++) Kl [i] = i + 48;
     Kl [10] = 190;
@@ -259,9 +383,41 @@ double Text_Stroka (double *x, double *y, bool *up_or_down)
                 txSetColor (TX_BLACK);
                 text (Kl_t[i], *x, *y, 25);
                 *x += 25 / 2.5 + 2;
-                txSleep (125);
+                txSleep (150);
                 }
             }
+
+        if (GetAsyncKeyState (VK_BACK) && tochka == 0 && X_min < *x)
+            {
+            Vvod = Otbros (Vvod / 10);
+            txSetFillColor (TX_WHITE);
+            txSetColor (TX_WHITE);
+            Clear (*x, *y, *x - 25 / 2.5 - 2, *y + 25);
+            *x -= (25 / 2.5 + 2);
+            txSleep (150);
+            }
+        if (GetAsyncKeyState (VK_BACK) && tochka == 1 && X_min < *x)
+            {
+            if   (kol_zn_posl_zap != 1) Vvod = Otbros (Vvod * (kol_zn_posl_zap - 1)) / (kol_zn_posl_zap - 1);
+            else
+            {
+            Vvod = Otbros (Vvod);
+            }
+            kol_zn_posl_zap --;
+            txSetFillColor (TX_WHITE);
+            txSetColor (TX_WHITE);
+            Clear (*x, *y, *x - 25 / 2.5 - 2, *y + 25);
+            if (kol_zn_posl_zap <= 0)
+                {
+                tochka = 0;
+                Clear (*x - 25 / 2.5 - 2, *y, *x - 50 / 2.5 - 4, *y + 25);
+                *x -= (25 / 2.5 + 2);
+                }
+            *x -= (25 / 2.5 + 2);
+            txSleep (150);
+            }
+
+        if (GetAsyncKeyState ('M')) system ("Karti.pdf");
 
         if (GetAsyncKeyState (VK_DOWN)) {*up_or_down = false; break;}
         if (GetAsyncKeyState (VK_UP))   {*up_or_down = true ; break;}
@@ -287,9 +443,27 @@ void Clear (double x1, double y1, double x2, double y2)
     txPolygon (Pryamoug, 4);
     }
 
+double Otbros (double x)
+    {
+    int y = x;
+    return y;
+    }
+
 double Interpolyaciya (double X1, double X2, double Xnugn, double nah1, double nah2)
     {
     return nah1 + (nah2 - nah1) * (Xnugn - X1) / (X2 - X1);
+    }
+
+double Pa (double tip)
+    {
+    if (tip == 1) return 400;
+    if (tip == 2) return 500;
+    if (tip == 3) return 650;
+    if (tip == 4) return 800;
+    if (tip == 5) return 1000;
+    if (tip == 6) return 1250;
+    if (tip == 7) return 1500;
+    if (tip >= 8) return 1500;
     }
 
 double Kg (double Pa)
@@ -309,7 +483,7 @@ double Pw (double Ph_w, double Ynw, double Yp)
 
 double Ph_w (double Aw, double Kl, double Kw, double Cx, double W, double F, double b)
     {
-    return Aw * Kl * Kw * Cx * W * F * b;
+    return Aw * Kl * Kw * Cx * W * F/* * sin (b) * sin (b)*/;
     }
 
 double Aw (double Pa)
@@ -340,9 +514,9 @@ double F (double diam, double l, double Ki/*= 0*/, double Kl /*= 0*/, double By 
     return (diam + 2 * Kl * Ki * By) * l * 0.001;
     }
 
-double Kw (double Visota, const char * tekst)
+double Kw (double Visota, int k)
     {
-    if (tekst == "A" && tekst == "a")
+    if (k == 1)
         {
         if (                 Visota < 15)  return 1;
         if (15 <= Visota  && Visota < 20)  return Interpolyaciya (15,  20,  Visota, 1,    1.25);
@@ -358,7 +532,7 @@ double Kw (double Visota, const char * tekst)
         if (350 <= Visota                ) return 2.75;
         }
 
-    if (tekst == "B" && tekst == "b")
+    if (k == 2)
         {
         if (                 Visota < 15)  return 0.65;
         if (15 <= Visota  && Visota < 20)  return Interpolyaciya (15,  20,  Visota, 0.65, 0.85);
@@ -374,7 +548,7 @@ double Kw (double Visota, const char * tekst)
         if (350 <= Visota                ) return 2.75;
         }
 
-    if (tekst == "C" && tekst == "c")
+    if (k == 3)
         {
         if (                 Visota < 15)  return 1;
         if (15 <= Visota  && Visota < 20)  return Interpolyaciya (15,  20,  Visota, 0.4,  0.55);
