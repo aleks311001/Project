@@ -203,18 +203,18 @@ void Iz (double x, double y, double Zoom, double do_shap_iz, double Dlina_iz, in
     txCircle (x * Zoom + perX, -(y - Dlina_iz / 1000) * Zoom + perY, diam_pr / 1000 * Zoom);
     }
 
-void Iz_Naklon (double x, double y, double x_dly_nakl, double y_dly_nakl, double Zoom, double ugol, double do_shap_iz, double Stroit_vis,
+void Iz_Naklon (double x, double y, double x_dly_nakl, double y_dly_nakl, double Zoom, double ugol, double do_shap_iz, double Stroit_vis, 
                 double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY)
     {
     double y_nakl = cos (ugol / 180 * 3.1415) */* (do_shap_iz + Stroit_vis / 2)*/ Dlina_iz;   //mm
     double x_nakl = sin (ugol / 180 * 3.1415) */* (do_shap_iz + Stroit_vis / 2)*/ Dlina_iz;
     if (x > 0) txLine (x * Zoom + perX, -y * Zoom + perY, (x - x_nakl / 1000) * Zoom + perX, -(y - y_nakl / 1000) * Zoom + perY);
     if (x < 0) txLine (x * Zoom + perX, -y * Zoom + perY, (x + x_nakl / 1000) * Zoom + perX, -(y - y_nakl / 1000) * Zoom + perY);
-
-    double Ugol_max = acos (c )-atan(Diam_iz / (2 * (do_shap_iz + Stroit_vis / 2)))
+    
+    double Ugol_max = -atan(Diam_iz / (2 * (do_shap_iz + Stroit_vis / 2)))
     /*for (int i = 0; i < Kol_vo_iz; i ++)
         {
-
+        
         } */
     }
 
