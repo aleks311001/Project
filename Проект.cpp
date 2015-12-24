@@ -31,7 +31,6 @@ double XWindow = 1216 + 250, YWindow = 760;
 void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst);
 void Vibor_Opori ();
 void Nahogdenie_Ugla ();
-void Risovanie ();
 void text (const char * text, double x, double y, double shrift = 15);
 void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y);
 void Clear (double x1, double y1, double x2, double y2);
@@ -57,10 +56,115 @@ int main()
     txTextCursor (false);
 
     Vibor_Opori ();
+    /*HDC Knopka_Vkl  = txLoadImage ("Image//Опоры//Шаблон_Вкл.bmp");
+    HDC Knopka_Vikl = txLoadImage ("Image//Опоры//Шаблон_Викл.bmp");
 
-    //Nahogdenie_Ugla ();
+    Knop Kn[5][8] = {};
+    //--------------------|         |           |
+    Koord_Op OP [5][8]= {{{-1.25, 0, -0.375, 18, -0.375, 25, -0.375, 25, 0.375, 25, 0.375, 25, 0.375, 18, 1.25, 0, -2, 19, -0.375, 20, 0.375, 20, 4.1, 19, 2,    23,  0.375, 24, -0.375, 24, -0.375, 23},
+                          {-1.25, 0, -0.375, 18, -0.375, 30,  0,     31, 0.375, 31, 0.375, 30, 0.375, 18, 1.25, 0, -2, 19, -0.375, 20, 0.375, 20, 2,   19, -4.1, 23, -0.375, 24,  0.375, 24,  4.1,   23, -2, 27, -0.375, 28, 0.375, 28, 2, 27}}};
 
-    Risovanie ();
+    char Nazv [5][8][49] = {{"П 110-1", "П 110-2"}};
+
+    while (txMouseButtons() != 1)
+        {
+        txBegin ();
+        txClear ();
+        for (int i = 0; i < 5; i++)
+            {
+            for (int n = 0; n < 8; n++)
+                {
+                Kn [i][n].x    = 152 * n + 76;
+                Kn [i][n].y    = 152 * i + 76;
+                Kn [i][n].vkl  = Knopka_Vkl;
+                Kn [i][n].vikl = Knopka_Vikl;
+                Knopka_Vibor (&Kn [i][n], OP[i][n], Nazv[i][n]);
+                }
+            }
+        txEnd ();
+        }
+
+    txClear ();*/
+
+    Nahogdenie_Ugla ();
+    /*double y = 23, x = 880;
+
+    txSetColor (TX_BLACK);
+    //text ("Климатические условия",                                              0, 0,   30);
+    text ("1.  Район по ветру:",                                                0, 20,  30);
+    text ("2.  Район по гололеду:",                                             0, 40,  30);
+    text ("3.  Региональный коэффицент:",                                       0, 60,  30);
+    text ("4.  Коэффицент надежности:",                                         0, 80,  30);
+    text ("5.  Тип местности (1 - А; 2 - В; 3 - С):",                           0, 100, 30);
+    text ("6.  Длина пролета:",                                                 0, 120, 30);
+    text ("7.  Высота расположения Приведенного центра тяжести проводов:",      0, 140, 30);
+    text ("8.  Диаметр провода:",                                               0, 160, 30);
+    text ("9.  Нормативное ветровое давление:",                                 0, 180, 30);//
+    text ("10. Длина ветрового пролета:",                                       0, 200, 30);
+    text ("11. Угол между направлением ветра и осью ВЛ:",                       0, 220, 30);
+    text ("12. Высота расположения Приведенного центра тяжести изоляторов:",    0, 240, 30);
+    text ("13. Диаметр тарелки изоляторов:",                                    0, 260, 30);
+    text ("14. Строительная высота изолятора:",                                 0, 280, 30);
+    text ("15. Число изоляторов в цепи:",                                       0, 300, 30);
+    text ("16. Число цепей изоляторов в гирляде:",                              0, 320, 30);
+    text ("17. Масса одного метра провода:",                                    0, 340, 30);
+    text ("18. Весовой пролет:",                                                0, 360, 30);
+    text ("19. Масса гирлянды:",                                                0, 380, 30);
+
+    bool up_or_down = false;
+
+    double data [19] = {};
+
+    for (int i = 0;;)
+        {
+        data [i] = Text_Stroka (&x, &y, &up_or_down);
+        txSleep (150);
+        txSetColor (TX_WHITE);
+        txLine (x, y + 7, x, y + 23);
+        x = 880;
+        if (up_or_down == false)
+            {
+            y += 20;
+            i ++;
+            }
+        if (up_or_down == true && i > 0)
+            {
+            y -= 20;
+            i --;
+            txSetFillColor (TX_WHITE);
+            Clear (880, y, 1000, y + 20);
+            }
+        if (GetAsyncKeyState (VK_RETURN) && i >= 18) break;
+        }
+
+    double Pa1 = Pa (data[0]);
+    double Kg1 = Kg (Pa1); //0.8
+    //------------------------------------------------------------------------------
+    double Aw1 = Aw (Pa1); //0.7
+    double Kl1 = Kl (data [5]); //1
+    double Kw_pr1 = Kw (data [6], data [4]); //1.2   тип местности
+    double Cx1 = Cx (data [7], false);    //1.1
+    double F1 = F  (data [7], data [9]);  //7.35
+    //--
+    double Ph_w1 = Ph_w (Aw1, Kl1, Kw_pr1, Cx1, Pa1, F1, data [10]); //6791
+    //----------
+    double Pw1 = Pw (Ph_w1, data [3], data [2]);//10682
+    //-------------------------------------------------------------------------------
+    double Kw_u1 = Kw (data [11], data [4]); //1.325  // тип местности
+    double Fu1 = Fu (data [12], data [13], data [14], data [15]);//0.204
+    //--------------------------------
+    double Pu1 = Pu (data [3], data [2], Kw_u1, Fu1, Pa1);//603
+    //----------------------------------------------------------------------------
+    double Gpr = data [16] * data [17] * 9.81; //1765.8
+    //-----------------------------------------------------------------------------
+    double Gg  = data [18] * 9.81; //981
+    //------------------------------------------------------------------------------
+    double Gb = 0;
+    //----------------------------------------------------------------------------
+    double tan_Ugol = (Kg1 * Pw1 + Pu1) / (Gpr + 0.5 * Gg + Gb);//4.0555
+    double Ugol = atan (tan_Ugol) * 180 / 3.1415;//76.1
+
+    printf ("%f, %f, %f, %f, %f, %f", Kw_u1, Fu1, Pu1, Gpr, Gg,  Ugol);*/
 
     return 0;
     }
@@ -71,9 +175,9 @@ void Vibor_Opori ()
     HDC Knopka_Vikl = txLoadImage ("Image//Опоры//Шаблон_Викл.bmp");
 
     Knop Kn[5][8] = {};
-
+    /*FILE* f_r = fopen ("База.cpp", "r");*/
     //--------------------|         |           |
-    Koord_Op OP [5][8]= {{{-1.25, 0, -0.375, 18, -0.375, 25, -0.375, 25, 0.375, 25, 0.375, 25, 0.375, 18, 1.25, 0, -2, 19, -0.375, 20, 0.375, 20, 4.1, 19, 2,    23,  0.375, 24, -0.375, 24, -0.375, 23},
+    Koord_Op OP [5][8]= {{{/*fprintf (f_r, "%f", 1)*/-1.25, 0, -0.375, 18, -0.375, 25, -0.375, 25, 0.375, 25, 0.375, 25, 0.375, 18, 1.25, 0, -2, 19, -0.375, 20, 0.375, 20, 4.1, 19, 2,    23,  0.375, 24, -0.375, 24, -0.375, 23},
                           {-1.25, 0, -0.375, 18, -0.375, 30,  0,     31, 0.375, 31, 0.375, 30, 0.375, 18, 1.25, 0, -2, 19, -0.375, 20, 0.375, 20, 2,   19, -4.1, 23, -0.375, 24,  0.375, 24,  4.1,   23, -2, 27, -0.375, 28, 0.375, 28, 2, 27}}};
 
     char Nazv [5][8][49] = {{"П 110-1", "П 110-2"}};
@@ -158,7 +262,7 @@ void Nahogdenie_Ugla ()
     //------------------------------------------------------------------------------
     double Aw1 = Aw (Pa1); //0.7
     double Kl1 = Kl (data [5]); //1
-    double Kw_pr1 = Kw (data [6], data [4]); //1.2  тип местности
+    double Kw_pr1 = Kw (data [6], data [4]); //1.2   тип местности
     double Cx1 = Cx (data [7], false);    //1.1
     double F1 = F  (data [7], data [9]);  //7.35
     //--
@@ -179,13 +283,9 @@ void Nahogdenie_Ugla ()
     //----------------------------------------------------------------------------
     double tan_Ugol = (Kg1 * Pw1 + Pu1) / (Gpr + 0.5 * Gg + Gb);//4.0555
     double Ugol = atan (tan_Ugol) * 180 / 3.1415;//76.1
-    }
 
-void Risovanie ()
-    {
-    txSetColor (TX_BLACK, 3);
-    DrawOpora (Opor_kord, 70, 400, 2000);
-    txLine (Opor_kord.x_travers11, Opor_kord.y_travers11, );
+    printf ("%f, %f, %f, %f, %f, %f", Kw_u1, Fu1, Pu1, Gpr, Gg/*, tan_Ugol*/,  Ugol);
+
     }
 
 void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst)
