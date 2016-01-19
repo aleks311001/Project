@@ -170,7 +170,7 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
 
     *do_shap_iz = data [19];
     *Dlina_iz   = data [20];
-    *Kol_vo_iz  = data [15];
+    *Kol_vo_iz  = data [14];
     *Diam_iz    = data [12];
     *Stroit_vis = data [13];
 
