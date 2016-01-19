@@ -25,19 +25,23 @@ struct Koord_Op
 Koord_Op Opor_kord = {};
 
 double XWindow = 1216 + 250, YWindow = 760;
+double Kg1 = 0, Pw1 = 0, Pu1 = 0, Gpr = 0, Gg = 0;
 
 //double X1 = 0, Y1 = 0, X2 = 0, Y2 = 0, X3 = 0, Y3 = 0;
 
 void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst);
 void Vibor_Opori ();
-void Nahogdenie_Ugla ();
-void Risovanie (double Ugol, double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double Stroit_vis, double diam_pr);
+void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, double *Diam_iz, double *Stroit_vis);
+void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double Stroit_vis);
 void Iz (double x, double y, double Zoom, double do_shap_iz, double Dlina_iz, int Kol_vo_iz,
-         double Diam_iz, double Stroit_vis, double diam_pr, double perX, double perY);
-void Iz_Naklon (double x, double y, double Zoom, double ugol, double do_shap_iz, double Stroit_vis, double Dlina_iz, double perX, double perY);
+         double Diam_iz, double Stroit_vis, double perX, double perY);
+void Iz_Naklon (double x, double y, double x2, double y2, double *Ugol_max, double Zoom, double do_shap_iz, double Stroit_vis, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY);
 void text (const char * text, double x, double y, double shrift = 15);
 void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y);
 void Clear (double x1, double y1, double x2, double y2);
+void Otobragenie_Ballast (double Ugol_max, int x, int y);
+double Nahodim_Gb (double Ugol_max);
+double dist (int x1, int y1, int x2, int y2);
 double Text_Stroka (double *x, double *y, bool *up_or_down);
 double Otbros (double x);
 double Interpolyaciya (double X1, double X2, double Xnugn, double nah1, double nah2);
@@ -59,11 +63,17 @@ int main()
 
     txTextCursor (false);
 
+    double do_shap_iz = 0, Dlina_iz = 0, Diam_iz = 0, Stroit_vis = 0;
+    int Kol_vo_iz = 0;
+
     Vibor_Opori ();
 
-    //Nahogdenie_Ugla ();
+    Nahogdenie_Ugla (&do_shap_iz, &Dlina_iz, &Kol_vo_iz, &Diam_iz, &Stroit_vis);
 
-    Risovanie (76, 500, 2000, 9, 255, 127, 21);
+    txSetFillColor (TX_WHITE);
+    txClear ();
+
+    Risovanie (do_shap_iz, Dlina_iz, Kol_vo_iz, Diam_iz, Stroit_vis);
 
     return 0;
     }
@@ -102,9 +112,9 @@ void Vibor_Opori ()
     txClear ();
     }
 
-void Nahogdenie_Ugla ()
+void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, double *Diam_iz, double *Stroit_vis)
     {
-    double y = 23, x = 880;
+    double y = 23, x = 900;
 
     txSetColor (TX_BLACK);
     //text ("Климатические условия",                                              0, 0,   30);
@@ -127,20 +137,22 @@ void Nahogdenie_Ugla ()
     text ("17. Масса одного метра провода, кг/м:",                                                       0, 340, 30);
     text ("18. Весовой пролет, м:",                                                                      0, 360, 30);
     text ("19. Масса гирлянды, кг:",                                                                     0, 380, 30);
-    text ("Нажмите M, чтобы посмотреть карты районирования территории РФ по климатическим воздействиям", 0, 400, 30);
+    text ("20. Расстояние до шапки изолятора, мм:",                                                      0, 400, 30);
+    text ("21. Длина гирлянды изоляторов, мм:",                                                          0, 420, 30);
+    text ("Нажмите M, чтобы посмотреть карты районирования территории РФ по климатическим воздействиям", 0, 440, 30);
+    text ("Чтобы продолжить нажмите два раза enter",                                                     0, 460, 30);
 
     bool up_or_down = false;
 
-    double data [19] = {};
+    double data [21] = {};
 
-    printf ("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-    for (int i = 0;;)
+    for (int i = 0; i < 21 || !GetAsyncKeyState (VK_RETURN);)
         {
         data [i] = Text_Stroka (&x, &y, &up_or_down);
         txSleep (150);
         txSetColor (TX_WHITE);
         txLine (x, y + 7, x, y + 23);
-        x = 880;
+        x = 900;
         if (up_or_down == false)
             {
             y += 20;
@@ -151,13 +163,19 @@ void Nahogdenie_Ugla ()
             y -= 20;
             i --;
             txSetFillColor (TX_WHITE);
-            Clear (880, y, 1000, y + 20);
+            Clear (900, y, 1000, y + 20);
             }
-        if (GetAsyncKeyState (VK_RETURN) && i >= 18) break;
         }
 
+
+    *do_shap_iz = data [19];
+    *Dlina_iz   = data [20];
+    *Kol_vo_iz  = data [15];
+    *Diam_iz    = data [12];
+    *Stroit_vis = data [13];
+
     double Pa1 = Pa (data[0]);
-    double Kg1 = Kg (Pa1); //0.8
+           Kg1 = Kg (Pa1); //0.8
     //------------------------------------------------------------------------------
     double Aw1 = Aw (Pa1); //0.7
     double Kl1 = Kl (data [5]); //1
@@ -167,55 +185,92 @@ void Nahogdenie_Ugla ()
     //--
     double Ph_w1 = Ph_w (Aw1, Kl1, Kw_pr1, Cx1, Pa1, F1, data [10]); //6791
     //----------
-    double Pw1 = Pw (Ph_w1, data [3], data [2]);//10682
+           Pw1 = Pw (Ph_w1, data [3], data [2]);//10682
     //-------------------------------------------------------------------------------
     double Kw_u1 = Kw (data [11], data [4]); //1.325  // тип местности
     double Fu1 = Fu (data [12], data [13], data [14], data [15]);//0.204
     //--------------------------------
-    double Pu1 = Pu (data [3], data [2], Kw_u1, Fu1, Pa1);//603
+           Pu1 = Pu (data [3], data [2], Kw_u1, Fu1, Pa1);//603
     //----------------------------------------------------------------------------
-    double Gpr = data [16] * data [17] * 9.81; //1765.8
+           Gpr = data [16] * data [17] * 9.81; //1765.8
     //-----------------------------------------------------------------------------
-    double Gg  = data [18] * 9.81; //981
+           Gg  = data [18] * 9.81; //981
+    //printf ("%lf", Gg);
     //------------------------------------------------------------------------------
-    double Gb = 0;
-    //----------------------------------------------------------------------------
-    double tan_Ugol = (Kg1 * Pw1 + Pu1) / (Gpr + 0.5 * Gg + Gb);//4.0555
-    double Ugol = atan (tan_Ugol) * 180 / 3.1415;//76.1
     }
 
-void Risovanie (double Ugol, double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double Stroit_vis, double diam_pr)
+void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double Stroit_vis)
     {
-    txSetColor (TX_BLACK, 3);
     double Zoom = 70;
+    double Ugol_max = 0;
+    txSetColor (TX_BLACK, 3);
     DrawOpora (Opor_kord, Zoom, 400, 1940);
-    Iz (Opor_kord.x_travers11, Opor_kord.y_travers11, Zoom, do_shap_iz, Dlina_iz, Kol_vo_iz, Diam_iz, Stroit_vis, diam_pr, 400, 1940);
-    Iz_Naklon (Opor_kord.x_travers11, Opor_kord.y_travers11, Zoom, Ugol, do_shap_iz, Stroit_vis, Dlina_iz, 400, 1940);
+    Iz (Opor_kord.x_travers14, Opor_kord.y_travers14, Zoom, do_shap_iz, Dlina_iz, Kol_vo_iz, Diam_iz, Stroit_vis, 400, 1940);
+    Iz_Naklon (Opor_kord.x_travers14, Opor_kord.y_travers14, Opor_kord.x_travers13, Opor_kord.y_travers13, &Ugol_max, Zoom, do_shap_iz, Stroit_vis, Dlina_iz, Kol_vo_iz, Diam_iz, 400, 1940);
+    Otobragenie_Ballast (Ugol_max, 1000, 300);
     }
 
 void Iz (double x, double y, double Zoom, double do_shap_iz, double Dlina_iz, int Kol_vo_iz,
-         double Diam_iz, double Stroit_vis, double diam_pr, double perX, double perY)
+         double Diam_iz, double Stroit_vis, double perX, double perY)
     {
     txLine (x * Zoom + perX, -y * Zoom + perY, x * Zoom + perX, -(y - Dlina_iz / 1000) * Zoom + perY);
-    for (int i = 0; i < Kol_vo_iz; i ++)
-        txLine ((x - Diam_iz / 2000) * Zoom + perX, -(y - do_shap_iz / 1000 - 0.5 * Stroit_vis / 1000 - i * Stroit_vis / 1000) * Zoom + perY,
-                (x + Diam_iz / 2000) * Zoom + perX, -(y - do_shap_iz / 1000 - 0.5 * Stroit_vis / 1000 - i * Stroit_vis / 1000) * Zoom + perY);
-    txCircle (x * Zoom + perX, -(y - Dlina_iz / 1000) * Zoom + perY, diam_pr / 1000 * Zoom);
+    for (int i = 0; i < Kol_vo_iz; i += 1)
+        {txLine ((x - Diam_iz / 2000) * Zoom + perX, -(y - do_shap_iz / 1000 - 0.5 * Stroit_vis / 1000 - i * Stroit_vis / 1000) * Zoom + perY,
+                 (x + Diam_iz / 2000) * Zoom + perX, -(y - do_shap_iz / 1000 - 0.5 * Stroit_vis / 1000 - i * Stroit_vis / 1000) * Zoom + perY);}
     }
 
-void Iz_Naklon (double x, double y, double x_dly_nakl, double y_dly_nakl, double Zoom, double ugol, double do_shap_iz, double Stroit_vis,
+void Iz_Naklon (double x, double y, double x2, double y2, double *Ugol_max, double Zoom, double do_shap_iz, double Stroit_vis,
                 double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY)
     {
-    double y_nakl = cos (ugol / 180 * 3.1415) */* (do_shap_iz + Stroit_vis / 2)*/ Dlina_iz;   //mm
-    double x_nakl = sin (ugol / 180 * 3.1415) */* (do_shap_iz + Stroit_vis / 2)*/ Dlina_iz;
+    double tan_Ugol = (Kg1 * Pw1 + Pu1) / (Gpr + 0.5 * Gg);//4.0555
+    double ugol = atan (tan_Ugol) * 180 / 3.1415;
+
+    double y_nakl = cos (ugol / 180 * 3.1415) * Dlina_iz;   //mm
+    double x_nakl = sin (ugol / 180 * 3.1415) * Dlina_iz;
+
+    if (y2 > y) *Ugol_max = 3.1514/2 - atan(Diam_iz / (2 * (do_shap_iz + Stroit_vis / 2)));
+    else        *Ugol_max = acos (do_shap_iz / dist (x, y, x + do_shap_iz, do_shap_iz * (y2 - y) / (x2 - x) + y)) - atan(Diam_iz / (2 * (do_shap_iz + Stroit_vis / 2)));
+
+    double y_nakl_pr = cos (*Ugol_max) * Dlina_iz;   //mm
+    double x_nakl_pr = sin (*Ugol_max) * Dlina_iz;
+
+    if (*Ugol_max * 180 / 3.1415 > ugol) txSetColor (RGB (0, 0, 255), 3);
+    else                                 txSetColor (RGB (255, 0, 0), 3);
+
     if (x > 0) txLine (x * Zoom + perX, -y * Zoom + perY, (x - x_nakl / 1000) * Zoom + perX, -(y - y_nakl / 1000) * Zoom + perY);
     if (x < 0) txLine (x * Zoom + perX, -y * Zoom + perY, (x + x_nakl / 1000) * Zoom + perX, -(y - y_nakl / 1000) * Zoom + perY);
 
-    double Ugol_max = acos (c )-atan(Diam_iz / (2 * (do_shap_iz + Stroit_vis / 2)))
-    /*for (int i = 0; i < Kol_vo_iz; i ++)
-        {
+    txSetColor (RGB (0, 255, 0), 3);
+    if (x > 0) txLine (x * Zoom + perX, -y * Zoom + perY, (x - x_nakl_pr / 1000) * Zoom + perX, -(y - y_nakl_pr / 1000) * Zoom + perY);
+    if (x < 0) txLine (x * Zoom + perX, -y * Zoom + perY, (x + x_nakl_pr / 1000) * Zoom + perX, -(y - y_nakl_pr / 1000) * Zoom + perY);
+    }
 
-        } */
+double Nahodim_Gb (double Ugol_max)
+    {
+    double Ugol = 100000;
+    double Gb = -0.005;
+    for (; Ugol >= Ugol_max; Gb += 0.005)
+        {
+        Ugol = atan ((Kg1 * Pw1 + Pu1) / (Gpr + 0.5 * Gg + Gb));
+        }
+    return Gb;
+    }
+
+void Otobragenie_Ballast (double Ugol_max, int x, int y)
+    {
+    double M_ballast = Nahodim_Gb (Ugol_max) / 9.81;
+    txSetColor (RGB(255, 215, 0));
+    txSetFillColor (TX_WHITE);
+    txRectangle (x - 200, y - 20, x + 200, y + 20);
+    char text [100] = "";
+    sprintf (text, "Нужен балласт массой %lg кг", M_ballast);
+    txSelectFont ("Arial", 30, 12, 0);
+    txTextOut (x - 200, y - 10, text);
+    }
+
+double dist (int x1, int y1, int x2, int y2)
+    {
+    return sqrt ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
     }
 
 void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst)
@@ -232,6 +287,7 @@ void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst)
         if (txMouseButtons() == 1)
             {
             Opor_kord = op;
+            printf ("%lf", Opor_kord.x_travers11);
             }
         dc = Kn->vkl;
         txSetColor (RGB (0, 0, 0), 2);
