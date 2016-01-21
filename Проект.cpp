@@ -35,7 +35,10 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
 void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double Stroit_vis);
 void Iz (double x, double y, double Zoom, double do_shap_iz, double Dlina_iz, int Kol_vo_iz,
          double Diam_iz, double Stroit_vis, double perX, double perY);
-void Iz_Naklon (double x, double y, double x2, double y2, double *Ugol_max, double Zoom, double do_shap_iz, double Stroit_vis, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY);
+void Iz_Naklon (double x, double y, double x2, double y2, double *Ugol_max, double Zoom, double do_shap_iz,
+                double Stroit_vis, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY);
+void Iz_vmeste (double x, double y, double x2, double y2, double Zoom, double do_shap_iz, double Dlina_iz,
+                double Stroit_vis, double Kol_vo_iz, double Diam_iz, double y_b);
 void text (const char * text, double x, double y, double shrift = 15);
 void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y);
 void Clear (double x1, double y1, double x2, double y2);
@@ -94,6 +97,7 @@ void Vibor_Opori ()
     while (txMouseButtons() != 1)
         {
         txBegin ();
+
         txClear ();
         for (int i = 0; i < 5; i++)
             {
@@ -114,7 +118,7 @@ void Vibor_Opori ()
 
 void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, double *Diam_iz, double *Stroit_vis)
     {
-    double y = 23, x = 900;
+    double y = 23, x = 910;
 
     txSetColor (TX_BLACK);
     //text ("Климатические условия",                                              0, 0,   30);
@@ -152,7 +156,7 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
         txSleep (150);
         txSetColor (TX_WHITE);
         txLine (x, y + 7, x, y + 23);
-        x = 900;
+        x = 910;
         if (up_or_down == false)
             {
             y += 20;
@@ -163,7 +167,7 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
             y -= 20;
             i --;
             txSetFillColor (TX_WHITE);
-            Clear (900, y, 1000, y + 20);
+            Clear (910, y, 1000, y + 20);
             }
         }
 
@@ -202,12 +206,20 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
 void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double Stroit_vis)
     {
     double Zoom = 70;
-    double Ugol_max = 0;
     txSetColor (TX_BLACK, 3);
     DrawOpora (Opor_kord, Zoom, 400, 1940);
-    Iz (Opor_kord.x_travers14, Opor_kord.y_travers14, Zoom, do_shap_iz, Dlina_iz, Kol_vo_iz, Diam_iz, Stroit_vis, 400, 1940);
-    Iz_Naklon (Opor_kord.x_travers14, Opor_kord.y_travers14, Opor_kord.x_travers13, Opor_kord.y_travers13, &Ugol_max, Zoom, do_shap_iz, Stroit_vis, Dlina_iz, Kol_vo_iz, Diam_iz, 400, 1940);
-    Otobragenie_Ballast (Ugol_max, 1000, 300);
+    Iz_vmeste (Opor_kord.x_travers11, Opor_kord.y_travers11, Opor_kord.x_travers12, Opor_kord.y_travers12, Zoom, do_shap_iz, Dlina_iz,
+               Stroit_vis, Kol_vo_iz, Diam_iz, 500);
+    Iz_vmeste (Opor_kord.x_travers14, Opor_kord.y_travers14, Opor_kord.x_travers13, Opor_kord.y_travers13, Zoom, do_shap_iz, Dlina_iz,
+               Stroit_vis, Kol_vo_iz, Diam_iz, 450);
+    Iz_vmeste (Opor_kord.x_travers21, Opor_kord.y_travers21, Opor_kord.x_travers22, Opor_kord.y_travers22, Zoom, do_shap_iz, Dlina_iz,
+               Stroit_vis, Kol_vo_iz, Diam_iz, 400);
+    Iz_vmeste (Opor_kord.x_travers24, Opor_kord.y_travers24, Opor_kord.x_travers23, Opor_kord.y_travers23, Zoom, do_shap_iz, Dlina_iz,
+               Stroit_vis, Kol_vo_iz, Diam_iz, 350);
+    Iz_vmeste (Opor_kord.x_travers31, Opor_kord.y_travers31, Opor_kord.x_travers32, Opor_kord.y_travers32, Zoom, do_shap_iz, Dlina_iz,
+               Stroit_vis, Kol_vo_iz, Diam_iz, 300);
+    Iz_vmeste (Opor_kord.x_travers34, Opor_kord.y_travers34, Opor_kord.x_travers33, Opor_kord.y_travers33, Zoom, do_shap_iz, Dlina_iz,
+               Stroit_vis, Kol_vo_iz, Diam_iz, 250);
     }
 
 void Iz (double x, double y, double Zoom, double do_shap_iz, double Dlina_iz, int Kol_vo_iz,
@@ -268,6 +280,18 @@ void Otobragenie_Ballast (double Ugol_max, int x, int y)
     txTextOut (x - 200, y - 10, text);
     }
 
+void Iz_vmeste (double x, double y, double x2, double y2, double Zoom, double do_shap_iz, double Dlina_iz,
+                double Stroit_vis, double Kol_vo_iz, double Diam_iz, double y_b)
+    {
+    if (x != x2)
+        {
+        double Ugol_max = 0;
+        Iz (x, y, Zoom, do_shap_iz, Dlina_iz, Kol_vo_iz, Diam_iz, Stroit_vis, 400, 1940);
+        Iz_Naklon (x, y, x2, y2, &Ugol_max, Zoom, do_shap_iz, Stroit_vis, Dlina_iz, Kol_vo_iz, Diam_iz, 400, 1940);
+        Otobragenie_Ballast (Ugol_max, XWindow - 500, YWindow - y_b);
+        }
+    }
+
 double dist (int x1, int y1, int x2, int y2)
     {
     return sqrt ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
@@ -287,7 +311,6 @@ void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst)
         if (txMouseButtons() == 1)
             {
             Opor_kord = op;
-            printf ("%lf", Opor_kord.x_travers11);
             }
         dc = Kn->vkl;
         txSetColor (RGB (0, 0, 0), 2);
@@ -314,28 +337,37 @@ void text (const char * text, double x, double y, double shrift)
 
 void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y)
     {
-    txLine (op.x_Stoyka1 * Zoom + Sdvig_x, -op.y_Stoyka1 * Zoom + Sdvig_y, op.x_Stoyka2 * Zoom + Sdvig_x, -op.y_Stoyka2 * Zoom + Sdvig_y);
-    txLine (op.x_Stoyka2 * Zoom + Sdvig_x, -op.y_Stoyka2 * Zoom + Sdvig_y, op.x_Stoyka3 * Zoom + Sdvig_x, -op.y_Stoyka3 * Zoom + Sdvig_y);
-    txLine (op.x_Stoyka3 * Zoom + Sdvig_x, -op.y_Stoyka3 * Zoom + Sdvig_y, op.x_Stoyka4 * Zoom + Sdvig_x, -op.y_Stoyka4 * Zoom + Sdvig_y);
-    txLine (op.x_Stoyka4 * Zoom + Sdvig_x, -op.y_Stoyka4 * Zoom + Sdvig_y, op.x_Stoyka5 * Zoom + Sdvig_x, -op.y_Stoyka5 * Zoom + Sdvig_y);
-    txLine (op.x_Stoyka5 * Zoom + Sdvig_x, -op.y_Stoyka5 * Zoom + Sdvig_y, op.x_Stoyka6 * Zoom + Sdvig_x, -op.y_Stoyka6 * Zoom + Sdvig_y);
-    txLine (op.x_Stoyka6 * Zoom + Sdvig_x, -op.y_Stoyka6 * Zoom + Sdvig_y, op.x_Stoyka7 * Zoom + Sdvig_x, -op.y_Stoyka7 * Zoom + Sdvig_y);
-    txLine (op.x_Stoyka7 * Zoom + Sdvig_x, -op.y_Stoyka7 * Zoom + Sdvig_y, op.x_Stoyka8 * Zoom + Sdvig_x, -op.y_Stoyka8 * Zoom + Sdvig_y);
+    txSetFillColor (TX_TRANSPARENT);
+    POINT Stoyka [8] = {{op.x_Stoyka1 * Zoom + Sdvig_x, -op.y_Stoyka1 * Zoom + Sdvig_y},
+                       {op.x_Stoyka2 * Zoom + Sdvig_x, -op.y_Stoyka2 * Zoom + Sdvig_y},
+                       {op.x_Stoyka3 * Zoom + Sdvig_x, -op.y_Stoyka3 * Zoom + Sdvig_y},
+                       {op.x_Stoyka4 * Zoom + Sdvig_x, -op.y_Stoyka4 * Zoom + Sdvig_y},
+                       {op.x_Stoyka5 * Zoom + Sdvig_x, -op.y_Stoyka5 * Zoom + Sdvig_y},
+                       {op.x_Stoyka6 * Zoom + Sdvig_x, -op.y_Stoyka6 * Zoom + Sdvig_y},
+                       {op.x_Stoyka7 * Zoom + Sdvig_x, -op.y_Stoyka7 * Zoom + Sdvig_y},
+                       {op.x_Stoyka8 * Zoom + Sdvig_x, -op.y_Stoyka8 * Zoom + Sdvig_y}};
 
-    txLine (op.x_travers11 * Zoom + Sdvig_x, -op.y_travers11 * Zoom + Sdvig_y, op.x_travers12 * Zoom + Sdvig_x, -op.y_travers12 * Zoom + Sdvig_y);
-    txLine (op.x_travers12 * Zoom + Sdvig_x, -op.y_travers12 * Zoom + Sdvig_y, op.x_travers13 * Zoom + Sdvig_x, -op.y_travers13 * Zoom + Sdvig_y);
-    txLine (op.x_travers13 * Zoom + Sdvig_x, -op.y_travers13 * Zoom + Sdvig_y, op.x_travers14 * Zoom + Sdvig_x, -op.y_travers14 * Zoom + Sdvig_y);
-    txLine (op.x_travers14 * Zoom + Sdvig_x, -op.y_travers14 * Zoom + Sdvig_y, op.x_travers11 * Zoom + Sdvig_x, -op.y_travers11 * Zoom + Sdvig_y);
+    POINT Traversa1 [4] = {{op.x_travers11 * Zoom + Sdvig_x, -op.y_travers11 * Zoom + Sdvig_y},
+                           {op.x_travers12 * Zoom + Sdvig_x, -op.y_travers12 * Zoom + Sdvig_y},
+                           {op.x_travers13 * Zoom + Sdvig_x, -op.y_travers13 * Zoom + Sdvig_y},
+                           {op.x_travers14 * Zoom + Sdvig_x, -op.y_travers14 * Zoom + Sdvig_y}};
 
-    txLine (op.x_travers21 * Zoom + Sdvig_x, -op.y_travers21 * Zoom + Sdvig_y, op.x_travers22 * Zoom + Sdvig_x, -op.y_travers22 * Zoom + Sdvig_y);
-    txLine (op.x_travers22 * Zoom + Sdvig_x, -op.y_travers22 * Zoom + Sdvig_y, op.x_travers23 * Zoom + Sdvig_x, -op.y_travers23 * Zoom + Sdvig_y);
-    txLine (op.x_travers23 * Zoom + Sdvig_x, -op.y_travers23 * Zoom + Sdvig_y, op.x_travers24 * Zoom + Sdvig_x, -op.y_travers24 * Zoom + Sdvig_y);
-    txLine (op.x_travers24 * Zoom + Sdvig_x, -op.y_travers24 * Zoom + Sdvig_y, op.x_travers21 * Zoom + Sdvig_x, -op.y_travers21 * Zoom + Sdvig_y);
+    POINT Traversa2 [4] = {{op.x_travers21 * Zoom + Sdvig_x, -op.y_travers21 * Zoom + Sdvig_y},
+                           {op.x_travers22 * Zoom + Sdvig_x, -op.y_travers22 * Zoom + Sdvig_y},
+                           {op.x_travers23 * Zoom + Sdvig_x, -op.y_travers23 * Zoom + Sdvig_y},
+                           {op.x_travers24 * Zoom + Sdvig_x, -op.y_travers24 * Zoom + Sdvig_y}};
 
-    txLine (op.x_travers31 * Zoom + Sdvig_x, -op.y_travers31 * Zoom + Sdvig_y, op.x_travers32 * Zoom + Sdvig_x, -op.y_travers32 * Zoom + Sdvig_y);
-    txLine (op.x_travers32 * Zoom + Sdvig_x, -op.y_travers32 * Zoom + Sdvig_y, op.x_travers33 * Zoom + Sdvig_x, -op.y_travers33 * Zoom + Sdvig_y);
-    txLine (op.x_travers33 * Zoom + Sdvig_x, -op.y_travers33 * Zoom + Sdvig_y, op.x_travers34 * Zoom + Sdvig_x, -op.y_travers34 * Zoom + Sdvig_y);
-    txLine (op.x_travers34 * Zoom + Sdvig_x, -op.y_travers34 * Zoom + Sdvig_y, op.x_travers31 * Zoom + Sdvig_x, -op.y_travers31 * Zoom + Sdvig_y);
+    POINT Traversa3 [4] = {{op.x_travers31 * Zoom + Sdvig_x, -op.y_travers31 * Zoom + Sdvig_y},
+                           {op.x_travers32 * Zoom + Sdvig_x, -op.y_travers32 * Zoom + Sdvig_y},
+                           {op.x_travers33 * Zoom + Sdvig_x, -op.y_travers33 * Zoom + Sdvig_y},
+                           {op.x_travers34 * Zoom + Sdvig_x, -op.y_travers34 * Zoom + Sdvig_y}};
+
+    txPolygon (Stoyka, 8);
+    txPolygon (Traversa1, 4);
+    txPolygon (Traversa2, 4);
+    txPolygon (Traversa3, 4);
+
+    txSetFillColor (TX_WHITE);
     }
 
 double Text_Stroka (double *x, double *y, bool *up_or_down)
@@ -408,12 +440,12 @@ double Text_Stroka (double *x, double *y, bool *up_or_down)
         if (GetAsyncKeyState (VK_DOWN)) {*up_or_down = false; break;}
         if (GetAsyncKeyState (VK_UP))   {*up_or_down = true ; break;}
 
-        if (n % 400000 == 200000)
+        if (n % 40000 == 20000)
             {
             txSetColor (TX_WHITE);
             txLine (*x, *y + 7, *x, *y + 23);
             }
-        if (n % 400000 == 0)
+        if (n % 40000 == 0)
             {
             txSetColor (TX_BLACK);
             txLine (*x, *y + 7, *x, *y + 23);
