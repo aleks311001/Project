@@ -88,7 +88,7 @@ void Vibor_Opori ()
 
     Knop Kn[5][8] = {};
 
-    //--------------------|         |           |
+    //--------------------|   st1   |    st2    |    st3    |    st4    |   st5    |    st6   |   st7    |   st8  |  tr1  |    tr1    |   tr1    |   tr1  |   tr2   |    tr2    |    tr2    |    tr2    |  tr3  |    tr3    |    tr3   | tr3 |
     Koord_Op OP [5][8]= {{{-1.25, 0, -0.375, 18, -0.375, 25, -0.375, 25, 0.375, 25, 0.375, 25, 0.375, 18, 1.25, 0, -2, 19, -0.375, 20, 0.375, 20, 4.1, 19, 2,    23,  0.375, 24, -0.375, 24, -0.375, 23},
                           {-1.25, 0, -0.375, 18, -0.375, 30,  0,     31, 0.375, 31, 0.375, 30, 0.375, 18, 1.25, 0, -2, 19, -0.375, 20, 0.375, 20, 2,   19, -4.1, 23, -0.375, 24,  0.375, 24,  4.1,   23, -2, 27, -0.375, 28, 0.375, 28, 2, 27}}};
 
@@ -144,20 +144,20 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
     text ("20. Расстояние до шапки изолятора, мм:",                                                      0, 400, 30);
     text ("21. Длина гирлянды изоляторов, мм:",                                                          0, 420, 30);
     text ("Нажмите M, чтобы посмотреть карты районирования территории РФ по климатическим воздействиям", 0, 440, 30);
-    text ("Чтобы продолжить нажмите два раза enter",                                                     0, 460, 30);
+    //text ("Чтобы продолжить нажмите два раза enter",                                                     0, 460, 30);
 
     bool up_or_down = false;
 
     double data [21] = {};
 
-    for (int i = 0; i < 21 || !GetAsyncKeyState (VK_RETURN);)
+    for (int i = 0; i < 21;)
         {
         data [i] = Text_Stroka (&x, &y, &up_or_down);
         txSleep (150);
         txSetColor (TX_WHITE);
         txLine (x, y + 7, x, y + 23);
         x = 910;
-        if (up_or_down == false)
+        if (up_or_down == false && i < 21)
             {
             y += 20;
             i ++;
@@ -286,6 +286,7 @@ void Iz_vmeste (double x, double y, double x2, double y2, double Zoom, double do
     if (x != x2)
         {
         double Ugol_max = 0;
+        txSetColor (TX_BLACK, 3);
         Iz (x, y, Zoom, do_shap_iz, Dlina_iz, Kol_vo_iz, Diam_iz, Stroit_vis, 400, 1940);
         Iz_Naklon (x, y, x2, y2, &Ugol_max, Zoom, do_shap_iz, Stroit_vis, Dlina_iz, Kol_vo_iz, Diam_iz, 400, 1940);
         Otobragenie_Ballast (Ugol_max, XWindow - 500, YWindow - y_b);
@@ -338,14 +339,15 @@ void text (const char * text, double x, double y, double shrift)
 void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y)
     {
     txSetFillColor (TX_TRANSPARENT);
+    //txSetColor (TX_BLACK);
     POINT Stoyka [8] = {{op.x_Stoyka1 * Zoom + Sdvig_x, -op.y_Stoyka1 * Zoom + Sdvig_y},
-                       {op.x_Stoyka2 * Zoom + Sdvig_x, -op.y_Stoyka2 * Zoom + Sdvig_y},
-                       {op.x_Stoyka3 * Zoom + Sdvig_x, -op.y_Stoyka3 * Zoom + Sdvig_y},
-                       {op.x_Stoyka4 * Zoom + Sdvig_x, -op.y_Stoyka4 * Zoom + Sdvig_y},
-                       {op.x_Stoyka5 * Zoom + Sdvig_x, -op.y_Stoyka5 * Zoom + Sdvig_y},
-                       {op.x_Stoyka6 * Zoom + Sdvig_x, -op.y_Stoyka6 * Zoom + Sdvig_y},
-                       {op.x_Stoyka7 * Zoom + Sdvig_x, -op.y_Stoyka7 * Zoom + Sdvig_y},
-                       {op.x_Stoyka8 * Zoom + Sdvig_x, -op.y_Stoyka8 * Zoom + Sdvig_y}};
+                        {op.x_Stoyka2 * Zoom + Sdvig_x, -op.y_Stoyka2 * Zoom + Sdvig_y},
+                        {op.x_Stoyka3 * Zoom + Sdvig_x, -op.y_Stoyka3 * Zoom + Sdvig_y},
+                        {op.x_Stoyka4 * Zoom + Sdvig_x, -op.y_Stoyka4 * Zoom + Sdvig_y},
+                        {op.x_Stoyka5 * Zoom + Sdvig_x, -op.y_Stoyka5 * Zoom + Sdvig_y},
+                        {op.x_Stoyka6 * Zoom + Sdvig_x, -op.y_Stoyka6 * Zoom + Sdvig_y},
+                        {op.x_Stoyka7 * Zoom + Sdvig_x, -op.y_Stoyka7 * Zoom + Sdvig_y},
+                        {op.x_Stoyka8 * Zoom + Sdvig_x, -op.y_Stoyka8 * Zoom + Sdvig_y}};
 
     POINT Traversa1 [4] = {{op.x_travers11 * Zoom + Sdvig_x, -op.y_travers11 * Zoom + Sdvig_y},
                            {op.x_travers12 * Zoom + Sdvig_x, -op.y_travers12 * Zoom + Sdvig_y},
@@ -437,15 +439,15 @@ double Text_Stroka (double *x, double *y, bool *up_or_down)
 
         if (GetAsyncKeyState ('M')) system ("Karti.pdf");
 
-        if (GetAsyncKeyState (VK_DOWN)) {*up_or_down = false; break;}
+        if (GetAsyncKeyState (VK_DOWN) || GetAsyncKeyState (VK_RETURN)) {*up_or_down = false; break;}
         if (GetAsyncKeyState (VK_UP))   {*up_or_down = true ; break;}
 
-        if (n % 40000 == 20000)
+        if (n % 200000 == 100000)
             {
             txSetColor (TX_WHITE);
             txLine (*x, *y + 7, *x, *y + 23);
             }
-        if (n % 40000 == 0)
+        if (n % 200000 == 0)
             {
             txSetColor (TX_BLACK);
             txLine (*x, *y + 7, *x, *y + 23);

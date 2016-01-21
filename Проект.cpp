@@ -88,7 +88,7 @@ void Vibor_Opori ()
 
     Knop Kn[5][8] = {};
 
-    //--------------------|         |           |
+    //--------------------|   st1   |    st2    |    st3    |    st4    |   st5    |    st6   |   st7    |   st8  |  tr1  |    tr1    |   tr1    |   tr1  |   tr2   |    tr2    |    tr2    |    tr2    |  tr3  |    tr3    |    tr3   | tr3 |
     Koord_Op OP [5][8]= {{{-1.25, 0, -0.375, 18, -0.375, 25, -0.375, 25, 0.375, 25, 0.375, 25, 0.375, 18, 1.25, 0, -2, 19, -0.375, 20, 0.375, 20, 4.1, 19, 2,    23,  0.375, 24, -0.375, 24, -0.375, 23},
                           {-1.25, 0, -0.375, 18, -0.375, 30,  0,     31, 0.375, 31, 0.375, 30, 0.375, 18, 1.25, 0, -2, 19, -0.375, 20, 0.375, 20, 2,   19, -4.1, 23, -0.375, 24,  0.375, 24,  4.1,   23, -2, 27, -0.375, 28, 0.375, 28, 2, 27}}};
 
@@ -286,7 +286,7 @@ void Iz_vmeste (double x, double y, double x2, double y2, double Zoom, double do
     if (x != x2)
         {
         double Ugol_max = 0;
-        txSetColor (TX_BLACK);
+        txSetColor (TX_BLACK, 3);
         Iz (x, y, Zoom, do_shap_iz, Dlina_iz, Kol_vo_iz, Diam_iz, Stroit_vis, 400, 1940);
         Iz_Naklon (x, y, x2, y2, &Ugol_max, Zoom, do_shap_iz, Stroit_vis, Dlina_iz, Kol_vo_iz, Diam_iz, 400, 1940);
         Otobragenie_Ballast (Ugol_max, XWindow - 500, YWindow - y_b);
