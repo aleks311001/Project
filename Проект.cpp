@@ -39,6 +39,8 @@ void Iz_Naklon (double x, double y, double x2, double y2, double *Ugol_max, doub
                 double Stroit_vis, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY);
 void Iz_vmeste (double x, double y, double x2, double y2, double Zoom, double do_shap_iz, double Dlina_iz,
                 double Stroit_vis, double Kol_vo_iz, double Diam_iz, double y_b);
+void Izol_po_otdel (double x, double y, double x2, double y2, double ugol, double Zoom, double do_shap_iz, double Stroit_vis,
+                    double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY);
 void text (const char * text, double x, double y, double shrift = 15);
 void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y);
 void Clear (double x1, double y1, double x2, double y2);
@@ -46,6 +48,7 @@ void Otobragenie_Ballast (double Ugol_max, int x, int y);
 double Nahodim_Gb (double Ugol_max);
 double dist (int x1, int y1, int x2, int y2);
 double Text_Stroka (double *x, double *y, bool *up_or_down);
+void Tablica (double x_razd, double kol_vo_srt, double vis_str);
 double Otbros (double x);
 double Interpolyaciya (double X1, double X2, double Xnugn, double nah1, double nah2);
 double Pa   (double tip);
@@ -118,7 +121,7 @@ void Vibor_Opori ()
 
 void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, double *Diam_iz, double *Stroit_vis)
     {
-    double y = 23, x = 910;
+    double y = 20, x = 910;
 
     txSetColor (TX_BLACK);
     //text ("Климатические условия",                                              0, 0,   30);
@@ -150,12 +153,14 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
 
     double data [21] = {};
 
+    Tablica (905, 21, 20);
+
     for (int i = 0; i < 21;)
         {
         data [i] = Text_Stroka (&x, &y, &up_or_down);
         txSleep (150);
         txSetColor (TX_WHITE);
-        txLine (x, y + 7, x, y + 23);
+        txLine (x, y + 7, x, y + 26);
         x = 910;
         if (up_or_down == false && i < 21)
             {
@@ -167,10 +172,9 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
             y -= 20;
             i --;
             txSetFillColor (TX_WHITE);
-            Clear (910, y, 1000, y + 20);
+            Clear (910, y + 7, 1000, y + 25);
             }
         }
-
 
     *do_shap_iz = data [19];
     *Dlina_iz   = data [20];
@@ -210,15 +214,15 @@ void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_i
     DrawOpora (Opor_kord, Zoom, 400, 1940);
     Iz_vmeste (Opor_kord.x_travers11, Opor_kord.y_travers11, Opor_kord.x_travers12, Opor_kord.y_travers12, Zoom, do_shap_iz, Dlina_iz,
                Stroit_vis, Kol_vo_iz, Diam_iz, 500);
-    Iz_vmeste (Opor_kord.x_travers14, Opor_kord.y_travers14, Opor_kord.x_travers13, Opor_kord.y_travers13, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 450);
     Iz_vmeste (Opor_kord.x_travers21, Opor_kord.y_travers21, Opor_kord.x_travers22, Opor_kord.y_travers22, Zoom, do_shap_iz, Dlina_iz,
                Stroit_vis, Kol_vo_iz, Diam_iz, 400);
-    Iz_vmeste (Opor_kord.x_travers24, Opor_kord.y_travers24, Opor_kord.x_travers23, Opor_kord.y_travers23, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 350);
     Iz_vmeste (Opor_kord.x_travers31, Opor_kord.y_travers31, Opor_kord.x_travers32, Opor_kord.y_travers32, Zoom, do_shap_iz, Dlina_iz,
                Stroit_vis, Kol_vo_iz, Diam_iz, 300);
-    Iz_vmeste (Opor_kord.x_travers34, Opor_kord.y_travers34, Opor_kord.x_travers33, Opor_kord.y_travers33, Zoom, do_shap_iz, Dlina_iz,
+    Iz_vmeste (Opor_kord.x_travers34, Opor_kord.y_travers14, Opor_kord.x_travers13, Opor_kord.y_travers13, Zoom, do_shap_iz, Dlina_iz,
+               Stroit_vis, Kol_vo_iz, Diam_iz, 450);
+    Iz_vmeste (Opor_kord.x_travers24, Opor_kord.y_travers24, Opor_kord.x_travers23, Opor_kord.y_travers23, Zoom, do_shap_iz, Dlina_iz,
+               Stroit_vis, Kol_vo_iz, Diam_iz, 350);
+    Iz_vmeste (Opor_kord.x_travers14, Opor_kord.y_travers34, Opor_kord.x_travers33, Opor_kord.y_travers33, Zoom, do_shap_iz, Dlina_iz,
                Stroit_vis, Kol_vo_iz, Diam_iz, 250);
     }
 
@@ -251,10 +255,29 @@ void Iz_Naklon (double x, double y, double x2, double y2, double *Ugol_max, doub
 
     if (x > 0) txLine (x * Zoom + perX, -y * Zoom + perY, (x - x_nakl / 1000) * Zoom + perX, -(y - y_nakl / 1000) * Zoom + perY);
     if (x < 0) txLine (x * Zoom + perX, -y * Zoom + perY, (x + x_nakl / 1000) * Zoom + perX, -(y - y_nakl / 1000) * Zoom + perY);
+    Izol_po_otdel (x, y, x2, y2, ugol, Zoom, do_shap_iz, Stroit_vis, Dlina_iz, Kol_vo_iz, Diam_iz, perX, perY);
 
     txSetColor (RGB (0, 255, 0), 3);
     if (x > 0) txLine (x * Zoom + perX, -y * Zoom + perY, (x - x_nakl_pr / 1000) * Zoom + perX, -(y - y_nakl_pr / 1000) * Zoom + perY);
     if (x < 0) txLine (x * Zoom + perX, -y * Zoom + perY, (x + x_nakl_pr / 1000) * Zoom + perX, -(y - y_nakl_pr / 1000) * Zoom + perY);
+    Izol_po_otdel (x, y, x2, y2, *Ugol_max, Zoom, do_shap_iz, Stroit_vis, Dlina_iz, Kol_vo_iz, Diam_iz, perX, perY);
+    }
+
+void Izol_po_otdel (double x, double y, double x2, double y2, double ugol, double Zoom, double do_shap_iz, double Stroit_vis,
+                    double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY)
+    {
+    double x_nakl_iz = 0, y_nakl_iz = 0, x_iz_l = 0, y_iz_l = 0, x_iz_r = 0, y_iz_r = 0;
+    for (int i = 0; i < Kol_vo_iz; i++)
+        {
+        y_nakl_iz = cos (ugol / 180 * 3.1415) * (do_shap_iz + Stroit_vis * (i + 0.5));   //mm
+        x_nakl_iz = sin (ugol / 180 * 3.1415) * (do_shap_iz + Stroit_vis * (i + 0.5));
+        x_iz_l = x_nakl_iz + Diam_iz * (y * 1000 - y_nakl_iz) * sqrt (1 / ((x * 1000 - x_nakl_iz) * (x * 1000 - x_nakl_iz) + (y * 1000 - y_nakl_iz) * (y * 1000 - y_nakl_iz)));
+        y_iz_l = y_nakl_iz - Diam_iz * (x * 1000 - x_nakl_iz) * sqrt (1 / ((x * 1000 - x_nakl_iz) * (x * 1000 - x_nakl_iz) + (y * 1000 - y_nakl_iz) * (y * 1000 - y_nakl_iz)));
+        x_iz_r = x_nakl_iz - Diam_iz * (y * 1000 - y_nakl_iz) * sqrt (1 / ((x * 1000 - x_nakl_iz) * (x * 1000 - x_nakl_iz) + (y * 1000 - y_nakl_iz) * (y * 1000 - y_nakl_iz)));
+        y_iz_r = y_nakl_iz + Diam_iz * (x * 1000 - x_nakl_iz) * sqrt (1 / ((x * 1000 - x_nakl_iz) * (x * 1000 - x_nakl_iz) + (y * 1000 - y_nakl_iz) * (y * 1000 - y_nakl_iz)));
+        txLine (x_iz_l * Zoom / 1000 + perX, -y_iz_l * Zoom / 1000 + perY, x_iz_r * Zoom / 1000 + perX, -y_iz_r * Zoom / 1000 + perY);
+        printf ("[%d] : %lf, %lf", i, x_iz_l * Zoom / 1000 + perX, y_iz_l * Zoom / 1000 + perY);
+        }
     }
 
 double Nahodim_Gb (double Ugol_max)
@@ -399,9 +422,9 @@ double Text_Stroka (double *x, double *y, bool *up_or_down)
                     }
                 if (GetAsyncKeyState (190)) tochka = 1;
                 txSetColor (TX_WHITE);
-                txLine (*x, *y + 7, *x, *y + 23);
+                txLine (*x, *y + 8, *x, *y + 25);
                 txSetColor (TX_BLACK);
-                text (Kl_t[i], *x, *y, 25);
+                text (Kl_t[i], *x, *y + 3, 25);
                 *x += 25 / 2.5 + 2;
                 txSleep (150);
                 }
@@ -412,7 +435,7 @@ double Text_Stroka (double *x, double *y, bool *up_or_down)
             Vvod = Otbros (Vvod / 10);
             txSetFillColor (TX_WHITE);
             txSetColor (TX_WHITE);
-            Clear (*x, *y, *x - 25 / 2.5 - 2, *y + 25);
+            Clear (*x, *y + 7, *x - 25 / 2.5 - 2, *y + 25);
             *x -= (25 / 2.5 + 2);
             txSleep (150);
             }
@@ -420,17 +443,17 @@ double Text_Stroka (double *x, double *y, bool *up_or_down)
             {
             if   (kol_zn_posl_zap != 1) Vvod = Otbros (Vvod * (kol_zn_posl_zap - 1)) / (kol_zn_posl_zap - 1);
             else
-            {
-            Vvod = Otbros (Vvod);
-            }
+                {
+                Vvod = Otbros (Vvod);
+                }
             kol_zn_posl_zap --;
             txSetFillColor (TX_WHITE);
             txSetColor (TX_WHITE);
-            Clear (*x, *y, *x - 25 / 2.5 - 2, *y + 25);
+            Clear (*x, *y + 7, *x - 25 / 2.5 - 2, *y + 25);
             if (kol_zn_posl_zap <= 0)
                 {
                 tochka = 0;
-                Clear (*x - 25 / 2.5 - 2, *y, *x - 50 / 2.5 - 4, *y + 25);
+                Clear (*x - 25 / 2.5 - 2, *y + 7, *x - 50 / 2.5 - 4, *y + 25);
                 *x -= (25 / 2.5 + 2);
                 }
             *x -= (25 / 2.5 + 2);
@@ -445,16 +468,25 @@ double Text_Stroka (double *x, double *y, bool *up_or_down)
         if (n % 200000 == 100000)
             {
             txSetColor (TX_WHITE);
-            txLine (*x, *y + 7, *x, *y + 23);
+            txLine (*x, *y + 8, *x, *y + 25);
             }
         if (n % 200000 == 0)
             {
             txSetColor (TX_BLACK);
-            txLine (*x, *y + 7, *x, *y + 23);
+            txLine (*x, *y + 8, *x, *y + 25);
             }
         }
 
     return Vvod;
+    }
+
+void Tablica (double x_razd, double kol_vo_srt, double vis_str)
+    {
+    for (int i = 1; i <= kol_vo_srt + 1; i++)
+        {
+        txLine (0, 6 + i * vis_str, XWindow, 6 + i * vis_str);
+        }
+    txLine (x_razd, vis_str + 6, x_razd, (kol_vo_srt + 1) * vis_str + 6);
     }
 
 void Clear (double x1, double y1, double x2, double y2)
