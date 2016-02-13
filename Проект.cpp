@@ -239,10 +239,10 @@ void Iz_Naklon (double x, double y, double x2, double y2, double *Ugol_max, doub
                 double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY)
     {
     double tan_Ugol = (Kg1 * Pw1 + Pu1) / (Gpr + 0.5 * Gg);//4.0555
-    double ugol = atan (tan_Ugol) * 180 / 3.1415;
+    double ugol = atan (tan_Ugol);
 
-    double y_nakl = cos (ugol / 180 * 3.1415) * Dlina_iz;   //mm
-    double x_nakl = sin (ugol / 180 * 3.1415) * Dlina_iz;
+    double y_nakl = cos (ugol) * Dlina_iz;   //mm
+    double x_nakl = sin (ugol) * Dlina_iz;
 
     if (y2 > y) *Ugol_max = 3.1514/2 - atan(Diam_iz / (2 * (do_shap_iz + Stroit_vis / 2)));
     else        *Ugol_max = acos (do_shap_iz / dist (x, y, x + do_shap_iz, do_shap_iz * (y2 - y) / (x2 - x) + y)) - atan(Diam_iz / (2 * (do_shap_iz + Stroit_vis / 2)));
@@ -250,7 +250,7 @@ void Iz_Naklon (double x, double y, double x2, double y2, double *Ugol_max, doub
     double y_nakl_pr = cos (*Ugol_max) * Dlina_iz;   //mm
     double x_nakl_pr = sin (*Ugol_max) * Dlina_iz;
 
-    if (*Ugol_max * 180 / 3.1415 > ugol) txSetColor (RGB (0, 0, 255), 3);
+    if (*Ugol_max > ugol) txSetColor (RGB (0, 0, 255), 3);
     else                                 txSetColor (RGB (255, 0, 0), 3);
 
     if (x > 0) txLine (x * Zoom + perX, -y * Zoom + perY, (x - x_nakl / 1000) * Zoom + perX, -(y - y_nakl / 1000) * Zoom + perY);
@@ -269,14 +269,18 @@ void Izol_po_otdel (double x, double y, double x2, double y2, double ugol, doubl
     double x_nakl_iz = 0, y_nakl_iz = 0, x_iz_l = 0, y_iz_l = 0, x_iz_r = 0, y_iz_r = 0;
     for (int i = 0; i < Kol_vo_iz; i++)
         {
-        y_nakl_iz = cos (ugol / 180 * 3.1415) * (do_shap_iz + Stroit_vis * (i + 0.5));   //mm
-        x_nakl_iz = sin (ugol / 180 * 3.1415) * (do_shap_iz + Stroit_vis * (i + 0.5));
-        x_iz_l = x_nakl_iz + Diam_iz * (y * 1000 - y_nakl_iz) * sqrt (1 / ((x * 1000 - x_nakl_iz) * (x * 1000 - x_nakl_iz) + (y * 1000 - y_nakl_iz) * (y * 1000 - y_nakl_iz)));
-        y_iz_l = y_nakl_iz - Diam_iz * (x * 1000 - x_nakl_iz) * sqrt (1 / ((x * 1000 - x_nakl_iz) * (x * 1000 - x_nakl_iz) + (y * 1000 - y_nakl_iz) * (y * 1000 - y_nakl_iz)));
-        x_iz_r = x_nakl_iz - Diam_iz * (y * 1000 - y_nakl_iz) * sqrt (1 / ((x * 1000 - x_nakl_iz) * (x * 1000 - x_nakl_iz) + (y * 1000 - y_nakl_iz) * (y * 1000 - y_nakl_iz)));
-        y_iz_r = y_nakl_iz + Diam_iz * (x * 1000 - x_nakl_iz) * sqrt (1 / ((x * 1000 - x_nakl_iz) * (x * 1000 - x_nakl_iz) + (y * 1000 - y_nakl_iz) * (y * 1000 - y_nakl_iz)));
-        txLine (x_iz_l * Zoom / 1000 + perX, -y_iz_l * Zoom / 1000 + perY, x_iz_r * Zoom / 1000 + perX, -y_iz_r * Zoom / 1000 + perY);
-        printf ("[%d] : %lf, %lf", i, x_iz_l * Zoom / 1000 + perX, y_iz_l * Zoom / 1000 + perY);
+        y_nakl_iz = cos (ugol) * (do_shap_iz + Stroit_vis * (i + 0.5));   //mm
+        x_nakl_iz = sin (ugol) * (do_shap_iz + Stroit_vis * (i + 0.5));
+        /*x_iz_l = x_nakl_iz - Diam_iz * (y * 1000 - y_nakl_iz) / sqrt ((x * 1000 - x_nakl_iz) * (x * 1000 - x_nakl_iz) + (y * 1000 - y_nakl_iz) * (y * 1000 - y_nakl_iz)) / 2;
+        y_iz_l = y_nakl_iz - Diam_iz * (x * 1000 - x_nakl_iz) / sqrt ((x * 1000 - x_nakl_iz) * (x * 1000 - x_nakl_iz) + (y * 1000 - y_nakl_iz) * (y * 1000 - y_nakl_iz)) / 2;
+        x_iz_r = x_nakl_iz + Diam_iz * (y * 1000 - y_nakl_iz) / sqrt ((x * 1000 - x_nakl_iz) * (x * 1000 - x_nakl_iz) + (y * 1000 - y_nakl_iz) * (y * 1000 - y_nakl_iz)) / 2;
+        y_iz_r = y_nakl_iz + Diam_iz * (x * 1000 - x_nakl_iz) / sqrt ((x * 1000 - x_nakl_iz) * (x * 1000 - x_nakl_iz) + (y * 1000 - y_nakl_iz) * (y * 1000 - y_nakl_iz)) / 2;*/
+        x_iz_l = x_nakl_iz - Diam_iz * sin (1 / 2 * txPI - ugol) / 2;
+        y_iz_l = y_nakl_iz + Diam_iz * cos (1 / 2 * txPI - ugol) / 2;
+        x_iz_r = x_nakl_iz - Diam_iz * sin (1 / 2 * txPI - ugol) / 2;
+        y_iz_r = y_nakl_iz + Diam_iz * cos (1 / 2 * txPI - ugol) / 2;
+        txLine ((x - x_iz_l / 1000) * Zoom + perX, -(y - y_iz_l / 1000) * Zoom + perY, (x - x_iz_r / 1000) * Zoom + perX, -(y - y_iz_r / 1000) * Zoom + perY);
+        printf ("[%d] : %lf, %lf", i, (x - x_iz_l / 1000) * Zoom + perX, -(y - y_iz_l / 1000) * Zoom + perY);
         }
     }
 
