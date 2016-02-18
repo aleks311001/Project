@@ -1,5 +1,6 @@
 
 #include "TXLib.h"
+
 /*изменить цвет балластов
 добавить функцию назад
 сделать сохранение рисунков опор
@@ -152,7 +153,6 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
     text ("20. Расстояние до шапки изолятора, мм:",                                                      0, 400, 30);
     text ("21. Длина гирлянды изоляторов, мм:",                                                          0, 420, 30);
     text ("Нажмите M, чтобы посмотреть карты районирования территории РФ по климатическим воздействиям", 0, 440, 30);
-    //text ("Чтобы продолжить нажмите два раза enter",                                                     0, 460, 30);
 
     bool up_or_down = false;
 
@@ -230,6 +230,7 @@ void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_i
                Stroit_vis, Kol_vo_iz, Diam_iz, 220 + n);
     Iz_vmeste (Opor_kord.x_travers14, Opor_kord.y_travers34, Opor_kord.x_travers33, Opor_kord.y_travers33, Zoom, do_shap_iz, Dlina_iz,
                Stroit_vis, Kol_vo_iz, Diam_iz, 270 + n);
+    SaveBMP ("cat #1", dc(), 1466, 760);
     }
 
 void Iz (double x, double y, double Zoom, double do_shap_iz, double Dlina_iz, int Kol_vo_iz,
@@ -259,7 +260,8 @@ void Iz_Naklon (double x, double y, double x2, double y2, double *Ugol_max, doub
     if (*Ugol_max > ugol) txSetColor (RGB (0, 0, 255), 3);
     else                  txSetColor (RGB (255, 0, 0), 3);
 
-    if (x > 0) txTextOut (x + 30, y, "") 
+    if (x > 0) txTextOut (x * Zoom + perX + 30, -y * Zoom + perY, "1");
+    if (x < 0) txTextOut (x * Zoom + perX - 30, -y * Zoom + perY, "1");
 
     if (x > 0) txLine (x * Zoom + perX, -y * Zoom + perY, (x - x_nakl / 1000) * Zoom + perX, -(y - y_nakl / 1000) * Zoom + perY);
     if (x < 0) txLine (x * Zoom + perX, -y * Zoom + perY, (x + x_nakl / 1000) * Zoom + perX, -(y - y_nakl / 1000) * Zoom + perY);

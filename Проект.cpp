@@ -1,7 +1,7 @@
 
 #include "TXLib.h"
-/*изменить цвет балластов
-добавить функцию назад
+
+/*добавить функцию назад
 сделать сохранение рисунков опор
 пронумеровать изоляторы
 сделать историю подсчета*/
@@ -47,6 +47,7 @@ void Iz_vmeste (double x, double y, double x2, double y2, double Zoom, double do
 void Izol_po_otdel (double x, double y, double x2, double y2, double ugol, double Zoom, double do_shap_iz, double Stroit_vis,
                     double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY);
 void text (const char * text, double x, double y, double shrift = 15);
+bool SaveBMP (const char* filename, HDC dc, int sizeX, int sizeY);
 void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y);
 void Clear (double x1, double y1, double x2, double y2);
 void Otobragenie_Ballast (double Ugol_max, int x, int y);
@@ -121,6 +122,8 @@ void Vibor_Opori ()
         txEnd ();
         }
 
+    txDelete (Knopka_Vkl);
+    txDelete (Knopka_Vikl);
     txClear ();
     }
 
@@ -229,6 +232,8 @@ void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_i
                Stroit_vis, Kol_vo_iz, Diam_iz, 220 + n);
     Iz_vmeste (Opor_kord.x_travers14, Opor_kord.y_travers34, Opor_kord.x_travers33, Opor_kord.y_travers33, Zoom, do_shap_iz, Dlina_iz,
                Stroit_vis, Kol_vo_iz, Diam_iz, 270 + n);
+
+    SaveBMP ("cat #1.bmp", txDC(), XWindow, YWindow);
     }
 
 void Iz (double x, double y, double Zoom, double do_shap_iz, double Dlina_iz, int Kol_vo_iz,
@@ -306,7 +311,7 @@ double Nahodim_Gb (double Ugol_max)
 void Otobragenie_Ballast (double Ugol_max, int x, int y)
     {
     double M_ballast = Nahodim_Gb (Ugol_max) / 9.81;
-    txSetColor (RGB(0, 200, 200));
+    txSetColor (RGB(0, 255, 0));
     txSetFillColor (TX_WHITE);
     txRectangle (x - 200, y - 20, x + 200, y + 20);
     char text [100] = "";
@@ -326,6 +331,41 @@ void Iz_vmeste (double x, double y, double x2, double y2, double Zoom, double do
         Iz_Naklon (x, y, x2, y2, &Ugol_max, Zoom, do_shap_iz, Stroit_vis, Dlina_iz, Kol_vo_iz, Diam_iz, 400, 1940);
         Otobragenie_Ballast (Ugol_max, XWindow - 500, YWindow - y_b);
         }
+    }
+
+bool SaveBMP (const char* filename, HDC dc, int sizeX, int sizeY)
+    {
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wmultichar"
+
+    assert (filename); assert (dc);
+
+    FILE* f = fopen (filename, "wb");
+    if (!f) return false;
+
+    size_t szHdrs = sizeof (BITMAPFILEHEADER) + sizeof (BITMAPINFOHEADER),
+           szImg  = (sizeX * sizeY) * sizeof (RGBQUAD);
+
+    BITMAPFILEHEADER hdr  = { 'MB', szHdrs + szImg, 0, 0, szHdrs };
+    BITMAPINFOHEADER info = { sizeof (info), sizeX, sizeY, 1, WORD (sizeof (RGBQUAD) * 8), BI_RGB };
+
+    RGBQUAD* buf = new RGBQUAD [sizeX * sizeY]; assert (buf);
+
+    txLock();
+    Win32::GetDIBits (dc, (HBITMAP) Win32::GetCurrentObject (dc, OBJ_BITMAP),
+                      0, sizeY, buf, (BITMAPINFO*) &info, DIB_RGB_COLORS);
+    txUnlock();
+
+    fwrite (&hdr,  sizeof (hdr),  1, f);
+    fwrite (&info, sizeof (info), 1, f);
+    fwrite (buf,   szImg,         1, f);
+
+    delete[] buf;
+
+    fclose (f);
+    return true;
+
+    #pragma GCC diagnostic pop
     }
 
 double dist (int x1, int y1, int x2, int y2)
