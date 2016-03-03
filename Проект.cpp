@@ -2,7 +2,27 @@
 #include "TXLib.h"
 
 /*добавить функцию назад
-сделать историю подсчета*/
+сделать историю подсчета
+       ()     ()
+      ( ()   () )
+       ( () () )
+        "00000"                   ()
+        00   00                  ()
+       00 8 8 00                ()
+       00  0  00               ()
+       00 ( ) 00999999999999999)
+        00 " 0099999999999999999
+         00000999999999999999999
+             999999999999999999
+             99 99        99 99
+            99   99      99   99
+           99     99    99     99
+          999    999   999    999
+тезисы пол стр а4 10-12 шрифт примерно 600 слов, план презентации
+залезть на сайт посмотреть презентации и выбрать две худших и лучших к каждой презентации есть тезисы выбрать тезисы
+побольше
+сколько мин доклада столько же слайдов мах 10
+*/
 
 //typedef void (Vid_op) (double x1, y1, x2, y2, x3, y3);
 
@@ -29,8 +49,6 @@ Koord_Op Opor_kord = {};
 
 double XWindow = 1216 + 250, YWindow = 760;
 double Kg1 = 0, Pw1 = 0, Pu1 = 0, Gpr = 0, Gg = 0;
-
-//double X1 = 0, Y1 = 0, X2 = 0, Y2 = 0, X3 = 0, Y3 = 0;
 
 void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst);
 void Vibor_Opori ();
@@ -141,7 +159,6 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
     text ("6.  Длина пролета, м:",                                                                       0, 120, 30);
     text ("7.  Высота расположения Приведенного центра тяжести проводов, м:",                            0, 140, 30);
     text ("8.  Диаметр провода, мм:",                                                                    0, 160, 30);
-    //text ("9.  Нормативное ветровое давление:",                                                          0, 180, 30);//
     text ("9. Длина ветрового пролета, м:",                                                              0, 180, 30);
     text ("10. Угол между направлением ветра и осью ВЛ, град:",                                          0, 200, 30);
     text ("11. Высота расположения Приведенного центра тяжести изоляторов, м:",                          0, 220, 30);
@@ -225,7 +242,7 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
 
 void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double Stroit_vis)
     {
-    double Zoom = 2.6 * YWindow / Opor_kord.y_Stoyka4;;
+    double Zoom = 2.4 * YWindow / Opor_kord.y_Stoyka4;;
     int n = 235;
     txSetColor (TX_BLACK, 3);
     DrawOpora (Opor_kord, Zoom, 400, 1840);
