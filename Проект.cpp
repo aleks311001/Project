@@ -62,7 +62,7 @@ void Iz_vmeste (double x, double y, double x2, double y2, double Zoom, double do
                 double Stroit_vis, double Kol_vo_iz, double Diam_iz, double y_b, const char* number);
 void Izol_po_otdel (double x, double y, double x2, double y2, double ugol, double Zoom, double do_shap_iz, double Stroit_vis,
                     double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY);
-void text (const char * text, double x, double y, double shrift = 15);
+void text (const char * text, double x, double y, double shrift = 15, double a = 0);
 bool SaveBMP (const char* filename, HDC dc, int sizeX, int sizeY);
 void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y);
 void Clear (double x1, double y1, double x2, double y2);
@@ -70,6 +70,7 @@ void Otobragenie_Ballast (double Ugol_max, int x, int y);
 double Nahodim_Gb (double Ugol_max);
 double dist (int x1, int y1, int x2, int y2);
 double Text_Stroka (double *x, double *y, bool *up_or_down);
+double Text_Stroka2 (double x, double y, bool *up_or_down);
 void Tablica (double x_razd, double kol_vo_srt, double vis_str);
 double Otbros (double x);
 double Interpolyaciya (double X1, double X2, double Xnugn, double nah1, double nah2);
@@ -159,7 +160,7 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
     text ("6.  Длина пролета, м:",                                                                       0, 120, 30);
     text ("7.  Высота расположения Приведенного центра тяжести проводов, м:",                            0, 140, 30);
     text ("8.  Диаметр провода, мм:",                                                                    0, 160, 30);
-    text ("9. Длина ветрового пролета, м:",                                                              0, 180, 30);
+    text ("9.  Длина ветрового пролета, м:",                                                              0, 180, 30);
     text ("10. Угол между направлением ветра и осью ВЛ, град:",                                          0, 200, 30);
     text ("11. Высота расположения Приведенного центра тяжести изоляторов, м:",                          0, 220, 30);
     text ("12. Диаметр тарелки изоляторов, мм:",                                                         0, 240, 30);
@@ -181,7 +182,7 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
 
     for (int i = 0; i < 20;)
         {
-        data [i] = Text_Stroka (&x, &y, &up_or_down);
+        data [i] = Text_Stroka2 (x, y + 3, &up_or_down);
         txSleep (150);
         txSetColor (TX_WHITE);
         txLine (x, y + 7, x, y + 26);
@@ -441,10 +442,13 @@ void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst)
     text (tekst, Kn->x - 60, Kn->y - 56);
     }
 
-void text (const char * text, double x, double y, double shrift)
+void text (const char * text, double x, double y, double shrift, double a)
     {
+    char t [100] = "";
     txSelectFont ("Comic Sans MS", shrift, shrift / 2.5, 0, false, false, false, 0);
     txTextOut (x, y, text);
+    sprintf (t, text, a);
+    txTextOut (x, y, t);
     }
 
 void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y)
@@ -566,6 +570,15 @@ double Text_Stroka (double *x, double *y, bool *up_or_down)
         }
 
     return Vvod;
+    }
+
+double Text_Stroka2 (double x, double y, bool *up_or_down)
+    {
+    char* vvod_t = new char [100];
+    vvod_t = fgets (vvod_t, 100, stdin);
+    txSetColor(TX_BLACK);
+    text (vvod_t, x, y, 25);
+    return atof (vvod_t);
     }
 
 void Tablica (double x_razd, double kol_vo_srt, double vis_str)
