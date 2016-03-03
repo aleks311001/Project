@@ -2,8 +2,6 @@
 #include "TXLib.h"
 
 /*добавить функцию назад
-сделать сохранение рисунков опор
-пронумеровать изоляторы
 сделать историю подсчета*/
 
 //typedef void (Vid_op) (double x1, y1, x2, y2, x3, y3);
@@ -41,9 +39,9 @@ void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_i
 void Iz (double x, double y, double Zoom, double do_shap_iz, double Dlina_iz, int Kol_vo_iz,
          double Diam_iz, double Stroit_vis, double perX, double perY);
 void Iz_Naklon (double x, double y, double x2, double y2, double *Ugol_max, double Zoom, double do_shap_iz,
-                double Stroit_vis, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY);
+                double Stroit_vis, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY, const char* number);
 void Iz_vmeste (double x, double y, double x2, double y2, double Zoom, double do_shap_iz, double Dlina_iz,
-                double Stroit_vis, double Kol_vo_iz, double Diam_iz, double y_b);
+                double Stroit_vis, double Kol_vo_iz, double Diam_iz, double y_b, const char* number);
 void Izol_po_otdel (double x, double y, double x2, double y2, double ugol, double Zoom, double do_shap_iz, double Stroit_vis,
                     double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY);
 void text (const char * text, double x, double y, double shrift = 15);
@@ -97,11 +95,12 @@ void Vibor_Opori ()
 
     Knop Kn[5][8] = {};
 
-    //--------------------|   st1   |    st2    |    st3    |    st4    |   st5    |    st6   |   st7    |   st8  |  tr1  |    tr1    |   tr1    |   tr1  |   tr2   |    tr2    |    tr2    |    tr2    |  tr3  |    tr3    |    tr3   | tr3 |
-    Koord_Op OP [5][8]= {{{-1.25, 0, -0.375, 18, -0.375, 25, -0.375, 25, 0.375, 25, 0.375, 25, 0.375, 18, 1.25, 0, -2, 19, -0.375, 20, 0.375, 20, 4.1, 19, 2,    23,  0.375, 24, -0.375, 24, -0.375, 23},
-                          {-1.25, 0, -0.375, 18, -0.375, 30,  0,     31, 0.375, 31, 0.375, 30, 0.375, 18, 1.25, 0, -2, 19, -0.375, 20, 0.375, 20, 2,   19, -4.1, 23, -0.375, 24,  0.375, 24,  4.1,   23, -2, 27, -0.375, 28, 0.375, 28, 2, 27}}};
+    //--------------------|   st1   |    st2    |    st3    |    st4    |   st5    |    st6   |   st7    |   st8  |   tr1   |    tr1    |   tr1    |   tr1  |    tr2    |     tr2     |    tr2      |     tr2     |  tr3  |    tr3    |    tr3   | tr3 |
+    Koord_Op OP [5][8]= {{{-1.25, 0, -0.375, 18, -0.375, 25, -0.375, 25, 0.375, 25, 0.375, 25, 0.375, 18, 1.25, 0, -2,   19, -0.375, 20, 0.375, 20, 4.1, 19, 2,    23,    0.375, 24,   -0.375, 24,   -0.375, 23},
+                          {-1.25, 0, -0.375, 18, -0.375, 30,  0,     31, 0.375, 31, 0.375, 30, 0.375, 18, 1.25, 0, -2,   19, -0.375, 20, 0.375, 20, 2,   19, -4.1, 23,   -0.375, 24,    0.375, 24,    4.1,   23,   -2, 27, -0.375, 28, 0.375, 28, 2, 27},
+                          {-3.4,  0, -3.4,   0,  -1.019, 59, -2.5,   61, 2.5,   61, 1.019, 59, 3.4,   0,  3.4,  0, -4.5, 40, -1.892, 38, 1.892, 38, 4.5, 40, -6.5, 47.5, -1.584, 45.4,  1.584, 45.4,  6.5,   47.5, -4, 55, -1.273, 53, 1.273, 53, 4, 55}}};
 
-    char Nazv [5][8][49] = {{"П 110-1", "П 110-2"}};
+    char Nazv [5][8][49] = {{"П 110-1", "П 110-2", "ПП110-2/40"}};
 
     while (txMouseButtons() != 1)
         {
@@ -122,8 +121,9 @@ void Vibor_Opori ()
         txEnd ();
         }
 
-    txDelete (Knopka_Vkl);
-    txDelete (Knopka_Vikl);
+    txDeleteDC (Knopka_Vkl);
+    txDeleteDC (Knopka_Vikl);
+
     txClear ();
     }
 
@@ -210,30 +210,43 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
            Gpr = data [16] * data [17] * 9.81; //1765.8
     //-----------------------------------------------------------------------------
            Gg  = data [18] * 9.81; //981
+    FILE *story = fopen ("History.cpp", "w");
+    for (int i = 0; i < 21; i++) fprintf (story, "%lf \n", data[i]);
+    fclose (story);
     //printf ("%lf", Gg);
     //------------------------------------------------------------------------------
     }
 
 void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double Stroit_vis)
     {
-    double Zoom = 70;
+    double Zoom = 2.6 * YWindow / Opor_kord.y_Stoyka4;;
     int n = 235;
     txSetColor (TX_BLACK, 3);
-    DrawOpora (Opor_kord, Zoom, 400, 1940);
+    DrawOpora (Opor_kord, Zoom, 400, 1840);
     Iz_vmeste (Opor_kord.x_travers11, Opor_kord.y_travers11, Opor_kord.x_travers12, Opor_kord.y_travers12, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 20  + n);
+               Stroit_vis, Kol_vo_iz, Diam_iz, 20  + n, "1");
     Iz_vmeste (Opor_kord.x_travers21, Opor_kord.y_travers21, Opor_kord.x_travers22, Opor_kord.y_travers22, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 70  + n);
+               Stroit_vis, Kol_vo_iz, Diam_iz, 70  + n, "2");
     Iz_vmeste (Opor_kord.x_travers31, Opor_kord.y_travers31, Opor_kord.x_travers32, Opor_kord.y_travers32, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 120 + n);
-    Iz_vmeste (Opor_kord.x_travers34, Opor_kord.y_travers14, Opor_kord.x_travers13, Opor_kord.y_travers13, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 170 + n);
+               Stroit_vis, Kol_vo_iz, Diam_iz, 120 + n, "3");
+    Iz_vmeste (Opor_kord.x_travers34, Opor_kord.y_travers34, Opor_kord.x_travers13, Opor_kord.y_travers13, Zoom, do_shap_iz, Dlina_iz,
+               Stroit_vis, Kol_vo_iz, Diam_iz, 170 + n, "4");
     Iz_vmeste (Opor_kord.x_travers24, Opor_kord.y_travers24, Opor_kord.x_travers23, Opor_kord.y_travers23, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 220 + n);
-    Iz_vmeste (Opor_kord.x_travers14, Opor_kord.y_travers34, Opor_kord.x_travers33, Opor_kord.y_travers33, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 270 + n);
+               Stroit_vis, Kol_vo_iz, Diam_iz, 220 + n, "5");
+    Iz_vmeste (Opor_kord.x_travers14, Opor_kord.y_travers14, Opor_kord.x_travers33, Opor_kord.y_travers33, Zoom, do_shap_iz, Dlina_iz,
+               Stroit_vis, Kol_vo_iz, Diam_iz, 270 + n, "6");
 
-    SaveBMP ("cat #1.bmp", txDC(), XWindow, YWindow);
+
+    int number;
+    FILE *name = fopen ("Names.cpp", "r");
+    fscanf (name, "%d", &number);
+    char name_f [40] = "";
+    number ++;
+    sprintf (name_f, "История//cat %d.bmp", number);
+    SaveBMP (name_f, txDC(), XWindow, YWindow);
+    name = fopen ("Names.cpp", "w");
+    fprintf (name, "%d", number);
+    fclose (name);
     }
 
 void Iz (double x, double y, double Zoom, double do_shap_iz, double Dlina_iz, int Kol_vo_iz,
@@ -246,7 +259,7 @@ void Iz (double x, double y, double Zoom, double do_shap_iz, double Dlina_iz, in
     }
 
 void Iz_Naklon (double x, double y, double x2, double y2, double *Ugol_max, double Zoom, double do_shap_iz, double Stroit_vis,
-                double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY)
+                double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY, const char* number)
     {
     double tan_Ugol = (Kg1 * Pw1 + Pu1) / (Gpr + 0.5 * Gg);//4.0555
     double ugol = atan (tan_Ugol);
@@ -263,8 +276,8 @@ void Iz_Naklon (double x, double y, double x2, double y2, double *Ugol_max, doub
     if (*Ugol_max > ugol) txSetColor (RGB (0, 0, 255), 3);
     else                  txSetColor (RGB (255, 0, 0), 3);
 
-    if (x > 0) txTextOut (x * Zoom + perX + 30, -y * Zoom + perY, "1");
-    if (x < 0) txTextOut (x * Zoom + perX - 30, -y * Zoom + perY, "1");
+    if (x > 0) txTextOut (x * Zoom + perX + 30, -y * Zoom + perY, number);
+    if (x < 0) txTextOut (x * Zoom + perX - 30, -y * Zoom + perY, number);
 
     if (x > 0) txLine (x * Zoom + perX, -y * Zoom + perY, (x - x_nakl / 1000) * Zoom + perX, -(y - y_nakl / 1000) * Zoom + perY);
     if (x < 0) txLine (x * Zoom + perX, -y * Zoom + perY, (x + x_nakl / 1000) * Zoom + perX, -(y - y_nakl / 1000) * Zoom + perY);
@@ -321,14 +334,14 @@ void Otobragenie_Ballast (double Ugol_max, int x, int y)
     }
 
 void Iz_vmeste (double x, double y, double x2, double y2, double Zoom, double do_shap_iz, double Dlina_iz,
-                double Stroit_vis, double Kol_vo_iz, double Diam_iz, double y_b)
+                double Stroit_vis, double Kol_vo_iz, double Diam_iz, double y_b, const char* number)
     {
     if (x != x2)
         {
         double Ugol_max = 0;
         txSetColor (TX_BLACK, 3);
-        Iz (x, y, Zoom, do_shap_iz, Dlina_iz, Kol_vo_iz, Diam_iz, Stroit_vis, 400, 1940);
-        Iz_Naklon (x, y, x2, y2, &Ugol_max, Zoom, do_shap_iz, Stroit_vis, Dlina_iz, Kol_vo_iz, Diam_iz, 400, 1940);
+        Iz (x, y, Zoom, do_shap_iz, Dlina_iz, Kol_vo_iz, Diam_iz, Stroit_vis, 400, 1840);
+        Iz_Naklon (x, y, x2, y2, &Ugol_max, Zoom, do_shap_iz, Stroit_vis, Dlina_iz, Kol_vo_iz, Diam_iz, 400, 1840, number);
         Otobragenie_Ballast (Ugol_max, XWindow - 500, YWindow - y_b);
         }
     }
@@ -376,8 +389,8 @@ double dist (int x1, int y1, int x2, int y2)
 void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst)
     {
     HDC dc = NULL;
-
-    int Zoom = 4.5;
+    double Zoom = 10, Zoom_b = 10;
+    if (op.y_Stoyka4 != 0) {Zoom = 100 / op.y_Stoyka4; Zoom_b = (YWindow - 20) / op.y_Stoyka4;}
 
     int Sdvig_x = Kn->x + 15, Sdvig_y = Kn->y + 60;
 
@@ -390,7 +403,7 @@ void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst)
             }
         dc = Kn->vkl;
         txSetColor (RGB (0, 0, 0), 2);
-        DrawOpora (op, 24, XWindow - 125, YWindow - 5);
+        DrawOpora (op, Zoom_b, XWindow - 125, YWindow - 5);
         }
     else
         {
