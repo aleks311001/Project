@@ -141,35 +141,35 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
     text ("6.  Длина пролета, м:",                                                                       0, 120, 30);
     text ("7.  Высота расположения Приведенного центра тяжести проводов, м:",                            0, 140, 30);
     text ("8.  Диаметр провода, мм:",                                                                    0, 160, 30);
-    text ("9.  Нормативное ветровое давление:",                                                          0, 180, 30);//
-    text ("10. Длина ветрового пролета, м:",                                                             0, 200, 30);
-    text ("11. Угол между направлением ветра и осью ВЛ, град:",                                          0, 220, 30);
-    text ("12. Высота расположения Приведенного центра тяжести изоляторов, м:",                          0, 240, 30);
-    text ("13. Диаметр тарелки изоляторов, мм:",                                                         0, 260, 30);
-    text ("14. Строительная высота изолятора, мм:",                                                      0, 280, 30);
-    text ("15. Число изоляторов в цепи, шт:",                                                            0, 300, 30);
-    text ("16. Число цепей изоляторов в гирляде, шт:",                                                   0, 320, 30);
-    text ("17. Масса одного метра провода, кг/м:",                                                       0, 340, 30);
-    text ("18. Весовой пролет, м:",                                                                      0, 360, 30);
-    text ("19. Масса гирлянды, кг:",                                                                     0, 380, 30);
-    text ("20. Расстояние до шапки изолятора, мм:",                                                      0, 400, 30);
-    text ("21. Длина гирлянды изоляторов, мм:",                                                          0, 420, 30);
-    text ("Нажмите M, чтобы посмотреть карты районирования территории РФ по климатическим воздействиям", 0, 440, 30);
+    //text ("9.  Нормативное ветровое давление:",                                                          0, 180, 30);//
+    text ("9. Длина ветрового пролета, м:",                                                              0, 180, 30);
+    text ("10. Угол между направлением ветра и осью ВЛ, град:",                                          0, 200, 30);
+    text ("11. Высота расположения Приведенного центра тяжести изоляторов, м:",                          0, 220, 30);
+    text ("12. Диаметр тарелки изоляторов, мм:",                                                         0, 240, 30);
+    text ("13. Строительная высота изолятора, мм:",                                                      0, 260, 30);
+    text ("14. Число изоляторов в цепи, шт:",                                                            0, 280, 30);
+    text ("15. Число цепей изоляторов в гирляде, шт:",                                                   0, 300, 30);
+    text ("16. Масса одного метра провода, кг/м:",                                                       0, 320, 30);
+    text ("17. Весовой пролет, м:",                                                                      0, 340, 30);
+    text ("18. Масса гирлянды, кг:",                                                                     0, 360, 30);
+    text ("19. Расстояние до шапки изолятора, мм:",                                                      0, 380, 30);
+    text ("20. Длина гирлянды изоляторов, мм:",                                                          0, 400, 30);
+    text ("Нажмите M, чтобы посмотреть карты районирования территории РФ по климатическим воздействиям", 0, 420, 30);
 
     bool up_or_down = false;
 
-    double data [21] = {};
+    double data [20] = {};
 
-    Tablica (905, 21, 20);
+    Tablica (905, 20, 20);
 
-    for (int i = 0; i < 21;)
+    for (int i = 0; i < 20;)
         {
         data [i] = Text_Stroka (&x, &y, &up_or_down);
         txSleep (150);
         txSetColor (TX_WHITE);
         txLine (x, y + 7, x, y + 26);
         x = 910;
-        if (up_or_down == false && i < 21)
+        if (up_or_down == false && i < 20)
             {
             y += 20;
             i ++;
@@ -183,11 +183,11 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
             }
         }
 
-    *do_shap_iz = data [19];
-    *Dlina_iz   = data [20];
-    *Kol_vo_iz  = data [14];
-    *Diam_iz    = data [12];
-    *Stroit_vis = data [13];
+    *do_shap_iz = data [18];
+    *Dlina_iz   = data [19];
+    *Kol_vo_iz  = data [13];
+    *Diam_iz    = data [11];
+    *Stroit_vis = data [12];
 
     double Pa1 = Pa (data[0]);
            Kg1 = Kg (Pa1); //0.8
@@ -196,25 +196,31 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
     double Kl1 = Kl (data [5]); //1
     double Kw_pr1 = Kw (data [6], data [4]); //1.2  тип местности
     double Cx1 = Cx (data [7], false);    //1.1
-    double F1 = F  (data [7], data [9]);  //7.35
+    double F1 = F  (data [7], data [8]);  //7.35
     //--
-    double Ph_w1 = Ph_w (Aw1, Kl1, Kw_pr1, Cx1, Pa1, F1, data [10]); //6791
+    double Ph_w1 = Ph_w (Aw1, Kl1, Kw_pr1, Cx1, Pa1, F1, data [9]); //6791
     //----------
            Pw1 = Pw (Ph_w1, data [3], data [2]);//10682
     //-------------------------------------------------------------------------------
-    double Kw_u1 = Kw (data [11], data [4]); //1.325  // тип местности
-    double Fu1 = Fu (data [12], data [13], data [14], data [15]);//0.204
+    double Kw_u1 = Kw (data [10], data [4]); //1.325  // тип местности
+    double Fu1 = Fu (data [11], data [12], data [13], data [14]);//0.204
     //--------------------------------
            Pu1 = Pu (data [3], data [2], Kw_u1, Fu1, Pa1);//603
     //----------------------------------------------------------------------------
-           Gpr = data [16] * data [17] * 9.81; //1765.8
+           Gpr = data [15] * data [16] * 9.81; //1765.8
     //-----------------------------------------------------------------------------
-           Gg  = data [18] * 9.81; //981
-    FILE *story = fopen ("History.cpp", "w");
-    for (int i = 0; i < 21; i++) fprintf (story, "%lf \n", data[i]);
-    fclose (story);
-    //printf ("%lf", Gg);
+           Gg  = data [17] * 9.81; //981
     //------------------------------------------------------------------------------
+
+    int number;
+    char name_f [40] = "";
+    FILE *name = fopen ("Names.cpp", "r");
+    fscanf (name, "%d", &number);
+    sprintf (name_f, "История//data %d.cpp", number);
+    FILE *story = fopen (name_f, "w");
+    for (int i = 0; i < 20; i++) fprintf (story, "%lf \n", data[i]);
+    fclose (story);
+    fclose (name);
     }
 
 void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double Stroit_vis)
@@ -238,13 +244,13 @@ void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_i
 
 
     int number;
+    char name_f [40] = "";
     FILE *name = fopen ("Names.cpp", "r");
     fscanf (name, "%d", &number);
-    char name_f [40] = "";
-    number ++;
-    sprintf (name_f, "История//cat %d.bmp", number);
+    sprintf (name_f, "История//ballast %d.bmp", number);
     SaveBMP (name_f, txDC(), XWindow, YWindow);
     name = fopen ("Names.cpp", "w");
+    number ++;
     fprintf (name, "%d", number);
     fclose (name);
     }
