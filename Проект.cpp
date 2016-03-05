@@ -3,8 +3,8 @@
 
 /*добавить функцию назад
 сделать историю подсчета
-       ()     ()
-      ( ()   () )
+
+        ()   ()
        ( () () )
         "00000"                   ()
         00   00                  ()
@@ -18,7 +18,7 @@
             99   99      99   99
            99     99    99     99
           999    999   999    999
-тезисы пол стр а4 10-12 шрифт примерно 600 слов, план презентации
+тезисы пол стр а4 10-12 шрифт примерно 400 слов, план презентации
 залезть на сайт посмотреть презентации и выбрать две худших и лучших к каждой презентации есть тезисы выбрать тезисы
 побольше
 сколько мин доклада столько же слайдов мах 10
@@ -50,7 +50,7 @@ Koord_Op Opor_kord = {};
 double XWindow = 1216 + 250, YWindow = 760;
 double Kg1 = 0, Pw1 = 0, Pu1 = 0, Gpr = 0, Gg = 0;
 
-void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst);
+void Knopka_Vibor (Knop * Kn, Koord_Op op, char* tekst);
 void Vibor_Opori ();
 void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, double *Diam_iz, double *Stroit_vis);
 void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double Stroit_vis);
@@ -62,7 +62,8 @@ void Iz_vmeste (double x, double y, double x2, double y2, double Zoom, double do
                 double Stroit_vis, double Kol_vo_iz, double Diam_iz, double y_b, const char* number);
 void Izol_po_otdel (double x, double y, double x2, double y2, double ugol, double Zoom, double do_shap_iz, double Stroit_vis,
                     double Dlina_iz, int Kol_vo_iz, double Diam_iz, double perX, double perY);
-void text (const char * text, double x, double y, double shrift = 15, double a = 0);
+void Del_pos_sim (char* s, int sz, int del);
+void text (char * text, double x, double y, double shrift = 15, double a = 0);
 bool SaveBMP (const char* filename, HDC dc, int sizeX, int sizeY);
 void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y);
 void Clear (double x1, double y1, double x2, double y2);
@@ -158,7 +159,7 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
     text ("4.  Коэффицент надежности по ответственности:",                                               0, 80,  30);
     text ("5.  Тип местности (1 - А; 2 - В; 3 - С):",                                                    0, 100, 30);
     text ("6.  Длина пролета, м:",                                                                       0, 120, 30);
-    text ("7.  Высота расположения Приведенного центра тяжести проводов, м:",                            0, 140, 30);
+    text ("7.  Высота расположения приведенного центра тяжести проводов, м:",                            0, 140, 30);
     text ("8.  Диаметр провода, мм:",                                                                    0, 160, 30);
     text ("9.  Длина ветрового пролета, м:",                                                              0, 180, 30);
     text ("10. Угол между направлением ветра и осью ВЛ, град:",                                          0, 200, 30);
@@ -182,7 +183,7 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
 
     for (int i = 0; i < 20;)
         {
-        data [i] = Text_Stroka2 (x, y + 3, &up_or_down);
+        data [i] = Text_Stroka2 (x, y, &up_or_down);
         txSleep (150);
         txSetColor (TX_WHITE);
         txLine (x, y + 7, x, y + 26);
@@ -248,17 +249,17 @@ void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_i
     txSetColor (TX_BLACK, 3);
     DrawOpora (Opor_kord, Zoom, 400, 1840);
     Iz_vmeste (Opor_kord.x_travers11, Opor_kord.y_travers11, Opor_kord.x_travers12, Opor_kord.y_travers12, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 20  + n, "1");
+               Stroit_vis, Kol_vo_iz, Diam_iz, 270+ n, "1");
     Iz_vmeste (Opor_kord.x_travers21, Opor_kord.y_travers21, Opor_kord.x_travers22, Opor_kord.y_travers22, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 70  + n, "2");
+               Stroit_vis, Kol_vo_iz, Diam_iz, 220 + n, "2");
     Iz_vmeste (Opor_kord.x_travers31, Opor_kord.y_travers31, Opor_kord.x_travers32, Opor_kord.y_travers32, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 120 + n, "3");
+               Stroit_vis, Kol_vo_iz, Diam_iz, 170 + n, "3");
     Iz_vmeste (Opor_kord.x_travers34, Opor_kord.y_travers34, Opor_kord.x_travers13, Opor_kord.y_travers13, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 170 + n, "4");
+               Stroit_vis, Kol_vo_iz, Diam_iz, 120 + n, "4");
     Iz_vmeste (Opor_kord.x_travers24, Opor_kord.y_travers24, Opor_kord.x_travers23, Opor_kord.y_travers23, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 220 + n, "5");
+               Stroit_vis, Kol_vo_iz, Diam_iz, 70 + n, "5");
     Iz_vmeste (Opor_kord.x_travers14, Opor_kord.y_travers14, Opor_kord.x_travers33, Opor_kord.y_travers33, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 270 + n, "6");
+               Stroit_vis, Kol_vo_iz, Diam_iz, 20 + n, "6");
 
 
     int number;
@@ -410,7 +411,7 @@ double dist (int x1, int y1, int x2, int y2)
     return sqrt ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
     }
 
-void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst)
+void Knopka_Vibor (Knop * Kn, Koord_Op op, char* tekst)
     {
     HDC dc = NULL;
     double Zoom = 10, Zoom_b = 10;
@@ -442,7 +443,7 @@ void Knopka_Vibor (Knop * Kn, Koord_Op op, const char* tekst)
     text (tekst, Kn->x - 60, Kn->y - 56);
     }
 
-void text (const char * text, double x, double y, double shrift, double a)
+void text (char * text, double x, double y, double shrift, double a)
     {
     char t [100] = "";
     txSelectFont ("Comic Sans MS", shrift, shrift / 2.5, 0, false, false, false, 0);
@@ -574,11 +575,66 @@ double Text_Stroka (double *x, double *y, bool *up_or_down)
 
 double Text_Stroka2 (double x, double y, bool *up_or_down)
     {
-    char* vvod_t = new char [100];
-    vvod_t = fgets (vvod_t, 100, stdin);
-    txSetColor(TX_BLACK);
-    text (vvod_t, x, y, 25);
+    //char* vvod_t = new char [100];
+    char vvod_t [100] = "";
+    int Kl [11] = {};
+    for (int i = 0; i < 10; i ++) Kl [i] = i + 48;
+    Kl [10] = 190;
+
+    char* Kl_t [11] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."};
+
+    for (int pos = 1;; !GetAsyncKeyState (VK_RETURN) || !GetAsyncKeyState (VK_UP) || !GetAsyncKeyState (VK_DOWN))
+        {
+        txBegin ();
+        for (int i = 0; i < 11; i++)
+            {
+            if (GetAsyncKeyState (Kl [i]))
+                {
+                pos++;
+                txSetColor (TX_WHITE);
+                Clear (x, y + 7, XWindow, y + 25);
+                strncat (vvod_t, Kl_t [i], 1);
+                txSetColor(TX_BLACK);
+                text (vvod_t, x, y + 2, 25);
+                txSleep(150);
+                }
+            }
+
+        if (GetAsyncKeyState (VK_BACK) && pos >= 0)
+            {
+            Del_pos_sim (vvod_t, 100, pos);
+            pos--;
+            txSetColor (TX_WHITE);
+            Clear (x, y + 7, XWindow, y + 25);
+            txSetColor(TX_BLACK);
+            text (vvod_t, x, y + 2, 25);
+            txSleep (150);
+            }
+
+        if (GetAsyncKeyState (VK_RETURN) || GetAsyncKeyState (VK_DOWN))
+            {
+            *up_or_down = false;
+            break;
+            }
+
+        if (GetAsyncKeyState (VK_UP))
+            {
+            *up_or_down = true;
+            break;
+            }
+
+        txEnd ();
+        }
     return atof (vvod_t);
+    }
+
+void Del_pos_sim (char* s, int sz, int del)
+    {
+    for (int n = 0, i = 0; i <= sz; i++, n++)
+        {
+        if (i > del) s[n] = s[i];
+        if (i == del) n--;
+        }
     }
 
 void Tablica (double x_razd, double kol_vo_srt, double vis_str)
