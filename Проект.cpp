@@ -52,7 +52,8 @@ double Kg1 = 0, Pw1 = 0, Pu1 = 0, Gpr = 0, Gg = 0;
 
 void Knopka_Vibor (Knop * Kn, Koord_Op op, char* tekst);
 void Vibor_Opori ();
-void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, double *Diam_iz, double *Stroit_vis);
+void Vibor_istor (double data [], double sz);
+void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, double *Diam_iz, double *Stroit_vis, double data[]);
 void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_iz, double Stroit_vis);
 void Iz (double x, double y, double Zoom, double do_shap_iz, double Dlina_iz, int Kol_vo_iz,
          double Diam_iz, double Stroit_vis, double perX, double perY);
@@ -70,8 +71,7 @@ void Clear (double x1, double y1, double x2, double y2);
 void Otobragenie_Ballast (double Ugol_max, int x, int y);
 double Nahodim_Gb (double Ugol_max);
 double dist (int x1, int y1, int x2, int y2);
-double Text_Stroka (double *x, double *y, bool *up_or_down);
-double Text_Stroka2 (double x, double y, bool *up_or_down);
+void Text_Stroka (double x, double y, bool *up_or_down, double* vvod, double* pos);
 void Tablica (double x_razd, double kol_vo_srt, double vis_str);
 double Otbros (double x);
 double Interpolyaciya (double X1, double X2, double Xnugn, double nah1, double nah2);
@@ -98,7 +98,9 @@ int main()
 
     Vibor_Opori ();
 
-    Nahogdenie_Ugla (&do_shap_iz, &Dlina_iz, &Kol_vo_iz, &Diam_iz, &Stroit_vis);
+    double data [20] = {};
+    Vibor_istor (data, 20);
+    Nahogdenie_Ugla (&do_shap_iz, &Dlina_iz, &Kol_vo_iz, &Diam_iz, &Stroit_vis, data);
 
     txSetFillColor (TX_WHITE);
     txClear ();
@@ -147,12 +149,32 @@ void Vibor_Opori ()
     txClear ();
     }
 
-void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, double *Diam_iz, double *Stroit_vis)
+void Vibor_istor (double data [], double sz)
+    {
+    while (!GetAsyncKeyState ('H') || !GetAsyncKeyState (VK_RETURN))
+        {
+        if (GetAsyncKeyState ('H'))
+            {
+            char name_h [40]= "";
+            int number = 0;
+            FILE *name = fopen ("Names.cpp", "r");
+            fscanf (name, "%d", &number);
+            sprintf (name_h, "История//data %d.cpp", number--);
+            FILE *story = fopen (name_h, "r");
+            for (int i = 0; i < sz; i++)
+                {
+                fscanf (story, "%f \n", &data [i]);
+                }
+            }
+        }
+    }
+
+void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, double *Diam_iz, double *Stroit_vis, double data[])
     {
     double y = 20, x = 910;
 
     txSetColor (TX_BLACK);
-    //text ("Климатические условия",                                              0, 0,   30);
+    text ("Климатические условия",                                                                       0, 0,   30);
     text ("1.  Район по ветру:",                                                                         0, 20,  30);
     text ("2.  Район по гололеду:",                                                                      0, 40,  30);
     text ("3.  Региональный коэффицент:",                                                                0, 60,  30);
@@ -161,7 +183,7 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
     text ("6.  Длина пролета, м:",                                                                       0, 120, 30);
     text ("7.  Высота расположения приведенного центра тяжести проводов, м:",                            0, 140, 30);
     text ("8.  Диаметр провода, мм:",                                                                    0, 160, 30);
-    text ("9.  Длина ветрового пролета, м:",                                                              0, 180, 30);
+    text ("9.  Длина ветрового пролета, м:",                                                             0, 180, 30);
     text ("10. Угол между направлением ветра и осью ВЛ, град:",                                          0, 200, 30);
     text ("11. Высота расположения Приведенного центра тяжести изоляторов, м:",                          0, 220, 30);
     text ("12. Диаметр тарелки изоляторов, мм:",                                                         0, 240, 30);
@@ -177,13 +199,21 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
 
     bool up_or_down = false;
 
-    double data [20] = {};
+    double pos [20] = {};
+
+    double y1 = y;
+    char data_t [20][100] = {};
+    for (int i = 0; i < 20; i ++, y1 += 20)
+        {
+        sprintf (data_t [i], "%f", data [i]);
+        text (data_t [i], x, y1 + 2, 25);
+        }
 
     Tablica (905, 20, 20);
 
     for (int i = 0; i < 20;)
         {
-        data [i] = Text_Stroka2 (x, y, &up_or_down);
+        Text_Stroka (x, y, &up_or_down, &data [i], &pos [i]);
         txSleep (150);
         txSetColor (TX_WHITE);
         txLine (x, y + 7, x, y + 26);
@@ -254,12 +284,12 @@ void Risovanie (double do_shap_iz, double Dlina_iz, int Kol_vo_iz, double Diam_i
                Stroit_vis, Kol_vo_iz, Diam_iz, 220 + n, "2");
     Iz_vmeste (Opor_kord.x_travers31, Opor_kord.y_travers31, Opor_kord.x_travers32, Opor_kord.y_travers32, Zoom, do_shap_iz, Dlina_iz,
                Stroit_vis, Kol_vo_iz, Diam_iz, 170 + n, "3");
-    Iz_vmeste (Opor_kord.x_travers34, Opor_kord.y_travers34, Opor_kord.x_travers13, Opor_kord.y_travers13, Zoom, do_shap_iz, Dlina_iz,
+    Iz_vmeste (Opor_kord.x_travers34, Opor_kord.y_travers34, Opor_kord.x_travers33, Opor_kord.y_travers33, Zoom, do_shap_iz, Dlina_iz,
                Stroit_vis, Kol_vo_iz, Diam_iz, 120 + n, "4");
     Iz_vmeste (Opor_kord.x_travers24, Opor_kord.y_travers24, Opor_kord.x_travers23, Opor_kord.y_travers23, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 70 + n, "5");
-    Iz_vmeste (Opor_kord.x_travers14, Opor_kord.y_travers14, Opor_kord.x_travers33, Opor_kord.y_travers33, Zoom, do_shap_iz, Dlina_iz,
-               Stroit_vis, Kol_vo_iz, Diam_iz, 20 + n, "6");
+               Stroit_vis, Kol_vo_iz, Diam_iz, 70  + n, "5");
+    Iz_vmeste (Opor_kord.x_travers14, Opor_kord.y_travers14, Opor_kord.x_travers13, Opor_kord.y_travers13, Zoom, do_shap_iz, Dlina_iz,
+               Stroit_vis, Kol_vo_iz, Diam_iz, 20  + n, "6");
 
 
     int number;
@@ -488,109 +518,26 @@ void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y)
     txSetFillColor (TX_WHITE);
     }
 
-double Text_Stroka (double *x, double *y, bool *up_or_down)
+void Text_Stroka (double x, double y, bool *up_or_down, double* vvod, double* pos)
     {
-    int X_min = *x;
-    int Kl [11] = {};
-    for (int i = 0; i < 10; i ++) Kl [i] = i + 48;
-    Kl [10] = 190;
-
-    char Kl_t[11] [40] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."};
-
-    double Vvod = 0;
-
-    int tochka = 0, kol_zn_posl_zap = 0;
-
-    for (int n = 0; ; n ++)
-        {
-        for (int i = 0; i < 11; i ++)
-            {
-            if (GetAsyncKeyState (Kl[i]))
-                {
-                if (!GetAsyncKeyState (190) && tochka == 0) Vvod = Vvod * 10 + Kl [i] - 48;
-                if (!GetAsyncKeyState (190) && tochka == 1)
-                    {
-                    Vvod += (Kl [i] - 48) / pow (10, kol_zn_posl_zap + 1);
-                    kol_zn_posl_zap ++;
-                    }
-                if (GetAsyncKeyState (190)) tochka = 1;
-                txSetColor (TX_WHITE);
-                txLine (*x, *y + 8, *x, *y + 25);
-                txSetColor (TX_BLACK);
-                text (Kl_t[i], *x, *y + 3, 25);
-                *x += 25 / 2.5 + 2;
-                txSleep (150);
-                }
-            }
-
-        if (GetAsyncKeyState (VK_BACK) && tochka == 0 && X_min < *x)
-            {
-            Vvod = Otbros (Vvod / 10);
-            txSetFillColor (TX_WHITE);
-            txSetColor (TX_WHITE);
-            Clear (*x, *y + 7, *x - 25 / 2.5 - 2, *y + 25);
-            *x -= (25 / 2.5 + 2);
-            txSleep (150);
-            }
-        if (GetAsyncKeyState (VK_BACK) && tochka == 1 && X_min < *x)
-            {
-            if   (kol_zn_posl_zap != 1) Vvod = Otbros (Vvod * (kol_zn_posl_zap - 1)) / (kol_zn_posl_zap - 1);
-            else
-                {
-                Vvod = Otbros (Vvod);
-                }
-            kol_zn_posl_zap --;
-            txSetFillColor (TX_WHITE);
-            txSetColor (TX_WHITE);
-            Clear (*x, *y + 7, *x - 25 / 2.5 - 2, *y + 25);
-            if (kol_zn_posl_zap <= 0)
-                {
-                tochka = 0;
-                Clear (*x - 25 / 2.5 - 2, *y + 7, *x - 50 / 2.5 - 4, *y + 25);
-                *x -= (25 / 2.5 + 2);
-                }
-            *x -= (25 / 2.5 + 2);
-            txSleep (150);
-            }
-
-        if (GetAsyncKeyState ('M')) system ("Karti.pdf");
-
-        if (GetAsyncKeyState (VK_DOWN) || GetAsyncKeyState (VK_RETURN)) {*up_or_down = false; break;}
-        if (GetAsyncKeyState (VK_UP))   {*up_or_down = true ; break;}
-
-        if (n % 200000 == 100000)
-            {
-            txSetColor (TX_WHITE);
-            txLine (*x, *y + 8, *x, *y + 25);
-            }
-        if (n % 200000 == 0)
-            {
-            txSetColor (TX_BLACK);
-            txLine (*x, *y + 8, *x, *y + 25);
-            }
-        }
-
-    return Vvod;
-    }
-
-double Text_Stroka2 (double x, double y, bool *up_or_down)
-    {
-    //char* vvod_t = new char [100];
+    double pos_t = *pos;
     char vvod_t [100] = "";
+    if (*vvod != 0) sprintf (vvod_t, "%g", *vvod);
     int Kl [11] = {};
     for (int i = 0; i < 10; i ++) Kl [i] = i + 48;
     Kl [10] = 190;
 
     char* Kl_t [11] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."};
 
-    for (int pos = 1;; !GetAsyncKeyState (VK_RETURN) || !GetAsyncKeyState (VK_UP) || !GetAsyncKeyState (VK_DOWN))
+    for (;; !GetAsyncKeyState (VK_RETURN) || !GetAsyncKeyState (VK_UP) || !GetAsyncKeyState (VK_DOWN))
         {
         txBegin ();
         for (int i = 0; i < 11; i++)
             {
+
             if (GetAsyncKeyState (Kl [i]))
                 {
-                pos++;
+                pos_t++;
                 txSetColor (TX_WHITE);
                 Clear (x, y + 7, XWindow, y + 25);
                 strncat (vvod_t, Kl_t [i], 1);
@@ -600,10 +547,10 @@ double Text_Stroka2 (double x, double y, bool *up_or_down)
                 }
             }
 
-        if (GetAsyncKeyState (VK_BACK) && pos >= 0)
+        if (GetAsyncKeyState (VK_BACK) && pos_t > 0)
             {
-            Del_pos_sim (vvod_t, 100, pos);
-            pos--;
+            Del_pos_sim (vvod_t, 100, pos_t - 1);
+            pos_t--;
             txSetColor (TX_WHITE);
             Clear (x, y + 7, XWindow, y + 25);
             txSetColor(TX_BLACK);
@@ -623,9 +570,19 @@ double Text_Stroka2 (double x, double y, bool *up_or_down)
             break;
             }
 
+        if (GetAsyncKeyState (VK_DELETE))
+            {
+            memset (vvod_t, 0, 100);
+            txSetColor (TX_WHITE);
+            Clear (x, y + 7, XWindow, y + 25);
+            txSetColor(TX_BLACK);
+            text (vvod_t, x, y + 2, 25);
+            }
+
         txEnd ();
         }
-    return atof (vvod_t);
+    *pos = pos_t;
+    *vvod = atof (vvod_t);
     }
 
 void Del_pos_sim (char* s, int sz, int del)
