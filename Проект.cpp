@@ -69,6 +69,7 @@ bool SaveBMP (const char* filename, HDC dc, int sizeX, int sizeY);
 void DrawOpora (Koord_Op op, double Zoom, double Sdvig_x, double Sdvig_y);
 void Clear (double x1, double y1, double x2, double y2);
 void Otobragenie_Ballast (double Ugol_max, int x, int y);
+bool Knopka_Data (Knop * Kn, char* tekst);
 double Nahodim_Gb (double Ugol_max);
 double dist (int x1, int y1, int x2, int y2);
 void Text_Stroka (double x, double y, bool *up_or_down, double* vvod, double* pos);
@@ -149,7 +150,7 @@ void Vibor_Opori ()
     txClear ();
     }
 
-void Vibor_istor (double data [], double sz)
+/*void Vibor_istor (double data [], double sz)
     {
     char name_h [40]= "";
     int number = 0;
@@ -157,11 +158,18 @@ void Vibor_istor (double data [], double sz)
     fscanf (name, "%d", &number);
     sprintf (name_h, "История//data %d.cpp", number);
     FILE *story = fopen (name_h, "r");
-    for (int i = 0; i < sz; i++)
+    txSetColor (TX_BLACK);
+    text ("Загрузить предыдущие данные?", 0, 120, 100);
+    for (;txMouseButtons() == 1;)
         {
-        fscanf (story, "%f \n", &data [i]);
+        if ()
+        for (int i = 0; i < sz; i++)
+            {
+            fscanf (story, "%f \n", &data [i]);
+            }
         }
-    }
+    txClear ();
+    } */
 
 void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, double *Diam_iz, double *Stroit_vis, double data[])
     {
@@ -466,6 +474,22 @@ void Knopka_Vibor (Knop * Kn, Koord_Op op, char* tekst)
     DrawOpora (op, Zoom, Sdvig_x, Sdvig_y);
 
     text (tekst, Kn->x - 60, Kn->y - 56);
+    }
+
+bool Knopka_Data (Knop * Kn, char* tekst)
+    {
+    return false;
+    HDC dc = NULL;
+    if (txMouseX() < Kn->x + 150 / 2 && txMouseX() > Kn->x - 150 / 2 &&
+        txMouseY() < Kn->y + 75 / 2 && txMouseY() > Kn->y - 75 / 2)
+        {
+        if (txMouseButtons() == 1) return true;
+        dc = Kn->vkl;
+        }
+    else dc = Kn->vikl;
+    txBitBlt (txDC(), Kn->x - 150 / 2, Kn->y - 75 / 2, 150, 75, dc, 0, 0);
+    txSetColor (RGB (0, 0, 255));
+    text (tekst, Kn->x - 60, Kn->y - 28);
     }
 
 void text (char * text, double x, double y, double shrift, double a)
