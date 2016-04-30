@@ -100,7 +100,7 @@ int main()
     Vibor_Opori ();
 
     double data [20] = {};
-    //Vibor_istor (data, 20);
+    Vibor_istor (data, 20);
     Nahogdenie_Ugla (&do_shap_iz, &Dlina_iz, &Kol_vo_iz, &Diam_iz, &Stroit_vis, data);
 
     txSetFillColor (TX_WHITE);
@@ -150,8 +150,10 @@ void Vibor_Opori ()
     txClear ();
     }
 
-/*void Vibor_istor (double data [], double sz)
+void Vibor_istor (double data [], double sz)
     {
+    HDC Knopka_Vkl  = txLoadImage ("Image//Опоры//ДА_НЕТ_Вкл.bmp");
+    HDC Knopka_Vikl = txLoadImage ("Image//Опоры//ДА_НЕТ_Викл.bmp");
     char name_h [40]= "";
     int number = 0;
     FILE *name = fopen ("Names.cpp", "r");
@@ -159,45 +161,52 @@ void Vibor_Opori ()
     sprintf (name_h, "История//data %d.cpp", number);
     FILE *story = fopen (name_h, "r");
     txSetColor (TX_BLACK);
-    text ("Загрузить предыдущие данные?", 0, 120, 100);
-    for (;txMouseButtons() == 1;)
+    txSetFillColor (TX_BLACK);
+    text ("Загрузить предыдущие данные?", 100, 120, 50);
+    printf ("Загрузить предыдущие данные?");
+    Knop Kn [2] = {{400, 600, Knopka_Vkl, Knopka_Vikl}, {900, 600, Knopka_Vkl, Knopka_Vikl}};
+    for (;;)
         {
-        if ()
-        for (int i = 0; i < sz; i++)
+        if (Knopka_Data (&Kn [0], "Да") == true)
             {
-            fscanf (story, "%f \n", &data [i]);
+            for (int i = 0; i < sz; i++)
+                {
+                fscanf (story, "%f \n", &data [i]);
+                }
+            break;
             }
+        if (Knopka_Data (&Kn [1], "Нет") == true) break;
         }
     txClear ();
-    } */
+    }
 
 void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, double *Diam_iz, double *Stroit_vis, double data[])
     {
-    double y = 20, x = 910;
+    double y = 26, x = 910;
 
     txSetColor (TX_BLACK);
     text ("Климатические условия",                                                                       0, 0,   30);
-    text ("1.  Район по ветру:",                                                                         0, 20,  30);
-    text ("2.  Район по гололеду:",                                                                      0, 40,  30);
-    text ("3.  Региональный коэффицент:",                                                                0, 60,  30);
-    text ("4.  Коэффицент надежности по ответственности:",                                               0, 80,  30);
-    text ("5.  Тип местности (1 - А; 2 - В; 3 - С):",                                                    0, 100, 30);
-    text ("6.  Длина пролета, м:",                                                                       0, 120, 30);
-    text ("7.  Высота расположения приведенного центра тяжести проводов, м:",                            0, 140, 30);
-    text ("8.  Диаметр провода, мм:",                                                                    0, 160, 30);
-    text ("9.  Длина ветрового пролета, м:",                                                             0, 180, 30);
-    text ("10. Угол между направлением ветра и осью ВЛ, град:",                                          0, 200, 30);
-    text ("11. Высота расположения Приведенного центра тяжести изоляторов, м:",                          0, 220, 30);
-    text ("12. Диаметр тарелки изоляторов, мм:",                                                         0, 240, 30);
-    text ("13. Строительная высота изолятора, мм:",                                                      0, 260, 30);
-    text ("14. Число изоляторов в цепи, шт:",                                                            0, 280, 30);
-    text ("15. Число цепей изоляторов в гирляде, шт:",                                                   0, 300, 30);
-    text ("16. Масса одного метра провода, кг/м:",                                                       0, 320, 30);
-    text ("17. Весовой пролет, м:",                                                                      0, 340, 30);
-    text ("18. Масса гирлянды, кг:",                                                                     0, 360, 30);
-    text ("19. Расстояние до шапки изолятора, мм:",                                                      0, 380, 30);
-    text ("20. Длина гирлянды изоляторов, мм:",                                                          0, 400, 30);
-    text ("Нажмите M, чтобы посмотреть карты районирования территории РФ по климатическим воздействиям", 0, 420, 30);
+    text ("1.  Район по ветру:",                                                                         0, 25,  30);
+    text ("2.  Район по гололеду:",                                                                      0, 50,  30);
+    text ("3.  Региональный коэффицент:",                                                                0, 75,  30);
+    text ("4.  Коэффицент надежности по ответственности:",                                               0, 100, 30);
+    text ("5.  Тип местности (1 - А; 2 - В; 3 - С):",                                                    0, 125, 30);
+    text ("6.  Длина пролета, м:",                                                                       0, 150, 30);
+    text ("7.  Высота расположения приведенного центра тяжести проводов, м:",                            0, 175, 30);
+    text ("8.  Диаметр провода, мм:",                                                                    0, 200, 30);
+    text ("9.  Длина ветрового пролета, м:",                                                             0, 225, 30);
+    text ("10. Угол между направлением ветра и осью ВЛ, град:",                                          0, 250, 30);
+    text ("11. Высота расположения Приведенного центра тяжести изоляторов, м:",                          0, 275, 30);
+    text ("12. Диаметр тарелки изоляторов, мм:",                                                         0, 300, 30);
+    text ("13. Строительная высота изолятора, мм:",                                                      0, 325, 30);
+    text ("14. Число изоляторов в цепи, шт:",                                                            0, 350, 30);
+    text ("15. Число цепей изоляторов в гирляде, шт:",                                                   0, 375, 30);
+    text ("16. Масса одного метра провода, кг/м:",                                                       0, 400, 30);
+    text ("17. Весовой пролет, м:",                                                                      0, 425, 30);
+    text ("18. Масса гирлянды, кг:",                                                                     0, 450, 30);
+    text ("19. Расстояние до шапки изолятора, мм:",                                                      0, 475, 30);
+    text ("20. Длина гирлянды изоляторов, мм:",                                                          0, 500, 30);
+    text ("Нажмите M, чтобы посмотреть карты районирования территории РФ по климатическим воздействиям", 0, 525, 30);
 
     bool up_or_down = false;
 
@@ -205,13 +214,13 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
 
     double y1 = y;
     char data_t [20][100] = {};
-    for (int i = 0; i < 20; i ++, y1 += 20)
+    for (int i = 0; i < 20; i ++, y1 += 25)
         {
         sprintf (data_t [i], "%f", data [i]);
         text (data_t [i], x, y1 + 2, 25);
         }
 
-    Tablica (905, 20, 20);
+    Tablica (905, 20, 25);
 
     for (int i = 0; i < 20;)
         {
@@ -222,12 +231,12 @@ void Nahogdenie_Ugla (double *do_shap_iz, double *Dlina_iz, int *Kol_vo_iz, doub
         x = 910;
         if (up_or_down == false && i < 20)
             {
-            y += 20;
+            y += 25;
             i ++;
             }
         if (up_or_down == true && i > 0)
             {
-            y -= 20;
+            y -= 25;
             i --;
             txSetFillColor (TX_WHITE);
             Clear (910, y + 7, 1000, y + 25);
@@ -324,9 +333,9 @@ void Iz_Naklon (double x, double y, double x2, double y2, double *Ugol_max, doub
     double y_nakl = cos (ugol) * Dlina_iz;   //mm
     double x_nakl = sin (ugol) * Dlina_iz;
 
-    if (y2 > y) *Ugol_max = 3.1514/2 - atan(Diam_iz / (2 * (do_shap_iz + Stroit_vis / 2)));
+    if (y2 > y) *Ugol_max = -3.1514/2 + atan(Diam_iz / (2 * do_shap_iz + Stroit_vis));
     else        *Ugol_max = acos (do_shap_iz / dist (x, y, x + do_shap_iz, do_shap_iz * (y2 - y) / (x2 - x) + y)) - atan(Diam_iz / (2 * (do_shap_iz + Stroit_vis / 2)));
-
+    printf ("%f, ", *Ugol_max * 180 / txPI);
     double y_nakl_pr = cos (*Ugol_max) * Dlina_iz;   //mm
     double x_nakl_pr = sin (*Ugol_max) * Dlina_iz;
 
@@ -370,19 +379,20 @@ void Izol_po_otdel (double x, double y, double x2, double y2, double ugol, doubl
 
 double Nahodim_Gb (double Ugol_max)
     {
-    double Ugol = 100000;
+    //double Ugol = 100000;
     double Gb = -0.005;
-    for (; Ugol >= Ugol_max; Gb += 0.005)
+    /*for (; Ugol >= Ugol_max; Gb += 0.005)
         {
         Ugol = atan ((Kg1 * Pw1 + Pu1) / (Gpr + 0.5 * Gg + Gb));
-        }
+        }  */
+    Gb = (Kg1 * Pw1 + Pu1)/tan(Ugol_max) - Gpr - 0.5 * Gg + 0.005;
     return Gb;
     }
 
 void Otobragenie_Ballast (double Ugol_max, int x, int y)
     {
     double M_ballast = Nahodim_Gb (Ugol_max) / 9.81;
-    txSetColor (RGB(0, 255, 0));
+    txSetColor (RGB(0, 153, 35));
     txSetFillColor (TX_WHITE);
     txRectangle (x - 355, y - 35, x + 360, y + 35);
     char text [100] = "";
@@ -619,9 +629,9 @@ void Tablica (double x_razd, double kol_vo_srt, double vis_str)
     {
     for (int i = 1; i <= kol_vo_srt + 1; i++)
         {
-        txLine (0, 6 + i * vis_str, XWindow, 6 + i * vis_str);
+        txLine (0, 4 + i * vis_str, XWindow, 4 + i * vis_str);
         }
-    txLine (x_razd, vis_str + 6, x_razd, (kol_vo_srt + 1) * vis_str + 6);
+    txLine (x_razd, vis_str + 4, x_razd, (kol_vo_srt + 1) * vis_str + 4);
     }
 
 void Clear (double x1, double y1, double x2, double y2)
